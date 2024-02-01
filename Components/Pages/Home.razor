@@ -1,7 +1,14 @@
 ﻿@page "/"
-
 <PageTitle>Home</PageTitle>
 
-<h1>Hello, world!</h1>
+<h1>Hello, world! @num</h1>
+<button @onclick="OnSetNum">Test</button>
 
-Welcome to your new app.
+@code{
+
+    int num { get; set; }
+
+    private void OnSetNum()
+        => num++;
+
+}
