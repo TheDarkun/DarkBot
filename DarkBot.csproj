@@ -5,8 +5,9 @@
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
         <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+        <UserSecretsId>eee18a4f-50c0-4cbd-b6cf-024184eb91cb</UserSecretsId>
     </PropertyGroup>
-
+    
     <ItemGroup>
       <PackageReference Include="DSharpPlus" Version="4.4.6" />
     </ItemGroup>

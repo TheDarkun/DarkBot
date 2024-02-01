@@ -1,4 +1,5 @@
 using DarkBot.Components;
+using DarkBot.Discord;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -6,8 +7,11 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
-var app = builder.Build();
+// Singletons
+var bot = new DiscordBot(builder.Configuration["token"]!);
+builder.Services.AddSingleton(bot);
 
+var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
@@ -24,4 +28,7 @@ app.UseAntiforgery();
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
 
+await bot.ConnectAsync();
+
 app.Run();
+
