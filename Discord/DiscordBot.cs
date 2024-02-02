@@ -15,6 +15,5 @@ public class DiscordBot(string token)
     public async Task ConnectAsync()
     {
         await discord.ConnectAsync();
-        await Task.Delay(-1);
     }
 }
