@@ -1,0 +1,18 @@
+﻿<li>
+    <a @onclick="@OnSetAside" href="@Name" class=" btn @(IsActive ? "btn-primary text-white" : "btn-ghost text-neutral-content") w-full h-full flex items-center justify-start ">
+        <span class="material-symbols-outlined">
+            @Icon
+        </span>
+        <p class="text-lg first-letter:uppercase">
+            @Name
+        </p>
+    </a>
+</li>
+
+@code{
+
+    [Parameter] public bool IsActive { get; set; }
+    [Parameter] public string Icon { get; set; } = null!;
+    [Parameter] public string Name { get; set; } = null!;
+    [Parameter] public EventCallback OnSetAside { get; set; }
+}

@@ -1,0 +1,11 @@
+{
+  "devDependencies": {
+    "tailwindcss": "^3.4.1"
+  },
+  "scripts": {
+    "tailwind": "npx tailwindcss -i ./wwwroot/app.css -o ./wwwroot/app.min.css --watch --minify"
+  },
+  "dependencies": {
+    "daisyui": "^4.6.1"
+  }
+}
