@@ -17,7 +17,7 @@ public partial class QOT
 
     protected override async Task OnInitializedAsync()
     {
-        var result = await Client.GetAsync($"{Manager.BaseUri}api/QOT");
+        var result = await Client.GetAsync($"{Manager.BaseUri}api/QOT/Data");
         Console.WriteLine(result.IsSuccessStatusCode);
         if (result.IsSuccessStatusCode)
         {
@@ -32,6 +32,6 @@ public partial class QOT
     {
         var result = await JsRuntime.InvokeAsync<bool>("confirm", "Are you sure?");
         if (result)
-            await Client.PutAsJsonAsync($"{Manager.BaseUri}api/QOT", newQOT);
+            await Client.PutAsJsonAsync($"{Manager.BaseUri}api/QOT/Data", newQOT);
     }
 }

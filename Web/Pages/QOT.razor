@@ -6,13 +6,20 @@
 <div class="card w-80 bg-secondary border-2 border-neutral mb-4">
     <div class="card-body">
         <h2 class="font-bold text-2xl">Current Info</h2>
-        <p>
-            <span class="font-medium text-xl">Index:</span> <span class="text-lg">@qot?.Index</span>
-        </p>
-        <p>
-            @*this is the only acceptable format, the US one is a mistake*@
-            <span class="font-medium text-xl">Date:</span> <span class="text-lg">@qot?.Date.ToString("d-M-yyyy")</span>
-        </p>
+        @if (qot is null)
+        {
+            <span class="loading loading-dots loading-md"></span>
+        }
+        else
+        {
+            <p>
+                <span class="font-medium text-xl">Index:</span> <span class="text-lg">@qot.Index</span>
+            </p>
+            <p>
+                @*this is the only acceptable format, the US one is a mistake*@
+                <span class="font-medium text-xl">Date:</span> <span class="text-lg">@qot.Date.ToString("d-M-yyyy")</span>
+            </p>
+        }
     </div>
 </div>
 
