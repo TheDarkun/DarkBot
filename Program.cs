@@ -1,3 +1,4 @@
+using DarkBot.Controllers;
 using DarkBot.Discord;
 using DarkBot.Services;
 using DarkBot.Web;
@@ -9,8 +10,11 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
+builder.Services.AddControllers();
+
 // Transients
 builder.Services.AddTransient<QOTService>();
+builder.Services.AddTransient<QOTController>();
 
 var app = builder.Build();
 // Configure the HTTP request pipeline.
@@ -33,6 +37,12 @@ app.UseAntiforgery();
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
 
+app.MapControllerRoute(
+    name: "default",
+    pattern: "api/{controller}/{action?}/{id?}"
+);
+
+// Create bot
 var bot = new DiscordBot(builder.Configuration["token"]!, app.Services);
 await bot.ConnectAsync();
 
