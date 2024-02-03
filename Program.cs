@@ -9,8 +9,7 @@ builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
 // Singletons
-var bot = new DiscordBot(builder.Configuration["token"]!);
-builder.Services.AddSingleton(bot);
+
 
 var app = builder.Build();
 // Configure the HTTP request pipeline.
@@ -33,7 +32,8 @@ app.UseAntiforgery();
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
 
-// await bot.ConnectAsync();
+var bot = new DiscordBot(builder.Configuration["token"]!, app.Services);
+await bot.ConnectAsync();
 
 app.Run();
 

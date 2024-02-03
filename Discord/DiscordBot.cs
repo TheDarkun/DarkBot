@@ -1,8 +1,10 @@
-﻿using DSharpPlus;
+﻿using DarkBot.Discord.Commands;
+using DSharpPlus;
+using DSharpPlus.SlashCommands;
 
 namespace DarkBot.Discord;
 
-public class DiscordBot(string token)
+public class DiscordBot(string token, IServiceProvider services)
 {
     private DiscordClient discord { get; set; } = new(new()
     {
@@ -12,8 +14,15 @@ public class DiscordBot(string token)
         AutoReconnect = true
     });
 
+    private IServiceProvider services { get; set; } = services;
+    
     public async Task ConnectAsync()
     {
+        var slash = discord.UseSlashCommands(new SlashCommandsConfiguration
+        {
+            Services = services
+        });
+        slash.RegisterCommands<QOTCommands>();
         await discord.ConnectAsync();
     }
 }
