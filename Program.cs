@@ -1,4 +1,5 @@
 using DarkBot.Discord;
+using DarkBot.Services;
 using DarkBot.Web;
 using Tailwind;
 
@@ -8,8 +9,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
-// Singletons
-
+// Transients
+builder.Services.AddTransient<QOTService>();
 
 var app = builder.Build();
 // Configure the HTTP request pipeline.
