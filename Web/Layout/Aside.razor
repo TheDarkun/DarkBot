@@ -8,11 +8,11 @@
     <div class="h-full px-3 py-4 overflow-y-auto">
         <ul class="space-y-2 font-medium">
             <AsideButton IsActive=@(currentWebsite == "" || currentWebsite == "home") Icon="home" Name="home" OnSetAside="@HandleSetAside" />
-            <AsideButton IsActive=@(currentWebsite == "test") Icon="home" Name="test" OnSetAside="@HandleSetAside" />
+            <AsideButton IsActive=@(currentWebsite == "qot") Icon="help" Name="qot" OnSetAside="@HandleSetAside" />
         </ul>
     </div>
 </aside>
-<div class="top-16 fixed  w-full h-full z-10 bg-neutral-content sm:hidden  transition-opacity @(isOpen ? "opacity-80" : "opacity-0")"></div>
+<div class="top-16 fixed  w-full h-full z-10 bg-neutral-content sm:hidden  transition-opacity @(isOpen ? "opacity-80" : "opacity-0 hidden")"></div>
 
 
 @code{

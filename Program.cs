@@ -11,6 +11,7 @@ builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
 builder.Services.AddControllers();
+builder.Services.AddHttpClient();
 
 // Transients
 builder.Services.AddTransient<QOTService>();
