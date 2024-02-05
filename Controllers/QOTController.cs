@@ -7,15 +7,15 @@ namespace DarkBot.Controllers;
 public class QOTController(QOTService service) : ControllerBase
 {
     [HttpGet]
-    public IActionResult Data()
+    public async Task<IActionResult> Data()
     {
-        return Ok(service.GetQOTModel());
+        return Ok(await service.GetQOTModel());
     }
 
     [HttpPut]
-    public IActionResult Data([FromBody] QOTModel newQOT)
+    public async Task<IActionResult> Data([FromBody] QOTModel newQOT)
     {
-        service.UpdateQOTModel(newQOT);
+        await service.UpdateQOTModel(newQOT);
         return Accepted();
     }
 }

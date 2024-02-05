@@ -13,17 +13,17 @@ public class QOTCommands(QOTService service) : ApplicationCommandModule
     {
         await ctx.DeferAsync(true);
 
-        var qot = service.GetQOTModel();
+        var qot = await service.GetQOTModel();
 
         if (qot.Date == DateTime.Today) // number.Date == DateTime.Today
         {
-            await ctx.EditResponseAsync((new DiscordWebhookBuilder()
-                .WithContent("There is already a question today!")));
+            await ctx.EditResponseAsync(new DiscordWebhookBuilder()
+                .WithContent("There is already a question today!"));
         }
         else
         {
             qot.UpdateQOTModel();
-            service.UpdateQOTModel(qot);
+            await service.UpdateQOTModel(qot);
             
             await ctx.DeleteResponseAsync();
             
