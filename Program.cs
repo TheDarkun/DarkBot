@@ -1,7 +1,10 @@
+using System.Text;
 using DarkBot.Controllers;
 using DarkBot.Discord;
 using DarkBot.Services;
 using DarkBot.Web;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 using Tailwind;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -17,6 +20,41 @@ builder.Services.AddHttpClient();
 builder.Services.AddTransient<QOTService>();
 builder.Services.AddTransient<QOTController>();
 
+builder.Services.AddTransient<AccountService>();
+builder.Services.AddTransient<AccountController>();
+
+builder.Services.AddCascadingAuthenticationState();
+
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+}).AddCookie()
+    .AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateAudience = false,
+        ValidateIssuer = false,
+        ValidateIssuerSigningKey = true,
+        ValidateLifetime = true,
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["randomJwtToken"]!))
+    };
+    
+    options.Events = new JwtBearerEvents
+    {
+        OnMessageReceived = context =>
+        {
+            if (context.Request.Cookies.TryGetValue("account", out string token))
+            {
+                context.Token = token;
+            }
+            return Task.CompletedTask;
+        }
+    };
+});
+
+builder.Services.AddAuthorizationCore();
 var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
@@ -33,18 +71,19 @@ else
 app.UseHttpsRedirection();
 
 app.UseStaticFiles();
-app.UseAntiforgery();
-
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
 
+app.UseAuthentication();
+app.UseRouting();
+app.UseAntiforgery();
+app.UseAuthorization();
 app.MapControllerRoute(
     name: "default",
     pattern: "api/{controller}/{action?}/{id?}"
 );
-
 // Create bot
-var bot = new DiscordBot(builder.Configuration["token"]!, app.Services);
+var bot = new DiscordBot(builder.Configuration["botToken"]!, app.Services);
 await bot.ConnectAsync();
 
 app.Run();
