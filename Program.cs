@@ -1,3 +1,4 @@
+using System.Net.Http.Headers;
 using System.Text;
 using DarkBot.Controllers;
 using DarkBot.Discord;
@@ -12,9 +13,20 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
-
+builder.Services.AddHttpContextAccessor();
 builder.Services.AddControllers();
-builder.Services.AddHttpClient();
+builder.Services.AddScoped(sp =>
+{
+    var httpClient = new HttpClient();
+    var httpContextAccessor = sp.GetRequiredService<IHttpContextAccessor>();
+    var accessToken = httpContextAccessor.HttpContext.Request.Cookies["account"];
+    if (!string.IsNullOrEmpty(accessToken))
+    {
+        httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+    }
+    return httpClient;
+});
+
 
 // Transients
 builder.Services.AddTransient<QOTService>();
@@ -29,6 +41,7 @@ builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
     options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
 }).AddCookie()
     .AddJwtBearer(options =>
 {
@@ -40,7 +53,6 @@ builder.Services.AddAuthentication(options =>
         ValidateLifetime = true,
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["randomJwtToken"]!))
     };
-    
     options.Events = new JwtBearerEvents
     {
         OnMessageReceived = context =>

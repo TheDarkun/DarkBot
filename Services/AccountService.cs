@@ -15,7 +15,7 @@ public class AccountService(IConfiguration config, HttpClient client)
 
     public string GetRedirect()
         => Config.GetSection("redirectURI").Value!;
-    
+
     public async Task<AccountModel?> Authenticate(string code)
     {
         var formData = new Dictionary<string, string>
@@ -41,11 +41,11 @@ public class AccountService(IConfiguration config, HttpClient client)
 
         return account;
     }
-    
+
     public async Task SaveAccount(AccountModel account)
     {
         // TODO: Encrypt tokens
-        
+
         using var db = new LiteDatabaseAsync("Data.db");
 
         var accountCollection = db.GetCollection<AccountModel>("Accounts");
@@ -53,7 +53,20 @@ public class AccountService(IConfiguration config, HttpClient client)
         await accountCollection.InsertAsync(account);
     }
 
-    public async Task<UserModel?> GetUser(AccountModel account)
+    public async Task DeleteAccount(string id)
+    {
+        using var db = new LiteDatabaseAsync("Data.db");
+        
+        var accountCollection = db.GetCollection<AccountModel>("Accounts");
+        var accountExists = await accountCollection.FindOneAsync(x => x.UserId == id);
+
+        if (accountExists is null)
+            return;
+
+        await accountCollection.DeleteAsync(accountExists.Id);
+    }
+
+public async Task<UserModel?> GetUser(AccountModel account)
     {
         Client.DefaultRequestHeaders.Add("Authorization", $"Bearer {account.AccessToken}");
         var response =

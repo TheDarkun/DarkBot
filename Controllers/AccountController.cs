@@ -1,4 +1,5 @@
 ﻿using DarkBot.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DarkBot.Controllers;
@@ -19,14 +20,15 @@ public class AccountController(AccountService service) : Controller
 
         if (account is null)
             return Forbid();
-
-        await service.SaveAccount(account);
-
+        
         var user = await service.GetUser(account);
         
         if (user is null)
             return Forbid();
 
+        account.UserId = user.Id;
+        await service.SaveAccount(account);
+        
         var jwtToken = service.CreateJwtToken(user);
         
         var options = new CookieOptions
@@ -40,5 +42,18 @@ public class AccountController(AccountService service) : Controller
         Response.Cookies.Append("account", jwtToken.ToString(), options);
 
         return Redirect("/");
+    }
+
+    [HttpDelete]
+    [Authorize]
+    public async Task<IActionResult> Logout()
+    {
+        Response.Cookies.Delete("account");
+        var id = HttpContext.User.Claims.FirstOrDefault(x => x.Type == "Id")?.Value;
+        if (id is null)
+            return Forbid();
+        
+        await service.DeleteAccount(id);
+        return NoContent();
     }
 }
