@@ -1,6 +1,74 @@
-﻿<header class="h-16 border-b-2 border-b-neutral bg-accent">
+﻿@rendermode InteractiveServer
+
+<header class=" h-16 border-b-2 border-b-neutral bg-accent flex justify-between items-center">
     <div class="flex gap-4 w-64 h-full items-center justify-center">
         <img src="icon.png" alt="">
         <a class="text-xl font-bold">DarkBot</a>
     </div>
+    <div class=" float-end w-48 flex justify-center items-center h-fit">
+        <AuthorizeView>
+            <Authorized>
+                @{
+                    var claims = new Dictionary<string, string?>();
+                    foreach (var claim in context.User.Claims)
+                    {
+                        if (!claims.ContainsKey(claim.Type))
+                        {
+                            claims.Add(claim.Type, claim.Value);
+                        }
+                    }
+                }
+                @*The null check ensures that there is at least username if the user hasn't set its Display Name*@
+                <p class="text-xl mx-2">@(claims["GlobalName"] ?? claims["Username"])</p>
+
+                <div class="dropdown dropdown-end">
+                    <div tabindex="0" role="button" class="avatar w-10 h-10 flex items-center">
+                        <div class="w-12 rounded-full hover:rounded-xl transition-radius">
+
+                            @if (string.IsNullOrEmpty(claims["Avatar"])) @*string.IsNullOrWhiteSpace(claims["Avatar"])*@
+                            {
+                                <img src="default.jpg"/>
+                            }
+                            else
+                            {
+                                <img src=@($"https://cdn.discordapp.com/avatars/{claims["Id"]}/{claims["Avatar"]}")/>
+                            }
+
+                        </div>
+
+                    </div>
+
+                    <ul tabindex="0" class="dropdown-content z-[100] menu p-2 border-2 border-neutral bg-accent rounded-box w-52 mt-5">
+                        <li>
+                            
+                            <a @onclick="OnLogout" class="">
+                                <span class="material-symbols-outlined">
+                                    logout
+                                </span>
+                                Logout
+                            </a>
+                        </li>
+                    </ul>
+
+                </div>
+            </Authorized>
+            <NotAuthorized>
+                <a href="/api/Account/Authorize" class="btn btn-primary text-white">Sign in</a>
+            </NotAuthorized>
+        </AuthorizeView>
+    </div>
 </header>
+
+@code{
+
+    [Inject] public NavigationManager Manager { get; set; } = null!;
+    [Inject] public IJSRuntime JsRuntime { get; set; } = null!;
+
+    private async Task OnLogout()
+    {
+        // C# HttpClient decided NOT to do its job and does not remove the cookie nor it redirects for state update... JavaScript saved the day
+        await JsRuntime.InvokeVoidAsync("fetch", "/api/Account/Logout", new { method = "DELETE", credentials = "same-origin" });
+        Manager.NavigateTo("/", true);
+    }
+
+}
