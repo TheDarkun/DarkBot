@@ -20,10 +20,41 @@ When you are programming you have to try and comply with rules such as naming co
 | Properties name           | PascalCase |
 | Delegate name             | PascalCase |
 | Enum type name            | PascalCase |
-### Project Structure
-Also please try to respect file organization.
+### Real programming
+When you finally realize, creating a discord bot is your passion, you can start... but there are some rules.
+1. create an Issue [here](https://github.com/TheDarkun/DarkBot/issues)
+  - use English!
+  - try making sense!
+  - create proper **prerequisites**
+    1. Create a simple tl;dr for your problem/idea
+    2. Try to find possible solutions (only if you know what you're doing)
+    3. Ideally make a visualization or even a video
+      - video is important for reproducing some bugs for example
+      - even a simple wireframe or something in paint is great for others to understand your problem/idea
+2. assign yourself to the Issue and create a branch there
+- ![image](https://github.com/TheDarkun/DarkBot/assets/106868917/332340bb-be23-42f4-9bc9-4993f5c8447b)
+  - please, create a branch through here, this is because when your pull request is successfull and you merge your branch, the issue automatically closes
+  - creating branch also has its naming convention!
+    - for feature use prefix **"feature/"**
+      - for example: "feature/dark-mode"
+    - for fixing a bug use prefix **"bugfix/"**
+      - for example: "bugfix/aside-button"
+3. create!
+  - if you get to this point, you can program
+  - **DON'T YOLO DEVELOP AND CREATE ONLY FEATURE/BUGFIX YOU ARE ASSIGNED TO DO**
+    - when you find out, there might be something that enhances you code, create an issue with prerequisites again
+  - please try and respect naming conventions and of course project structure!
+  - ![image](https://github.com/TheDarkun/DarkBot/assets/106868917/ac52ec8b-d8e5-44a5-8b0a-c81db6202994)
+4. pull request
+  - after you are finished, you might want to merge your branch to main immediatelly
+  - unfortunately you have to create a pull request first, this is because we don't want to add broken code into our main branch!
+  - someone has to check your code and has to approve your pull request
+5. merging
+  - congratulations!!! you've made it
+  - now you can enjoy your perfect code in main and can create a proper release!
 
-![image](https://github.com/TheDarkun/DarkBot/assets/106868917/ac52ec8b-d8e5-44a5-8b0a-c81db6202994)
+
+
 ### secrets.json
 Instead of putting variables in appSettings.json, use secrets.json. This prevents you from accidentally commiting your tokens.
 ```json
