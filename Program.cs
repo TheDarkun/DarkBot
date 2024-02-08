@@ -16,6 +16,8 @@ builder.Services.AddHttpClient();
 // Transients
 builder.Services.AddTransient<QOTService>();
 builder.Services.AddTransient<QOTController>();
+builder.Services.AddTransient<PollService>();
+builder.Services.AddTransient<PollController>();
 
 var app = builder.Build();
 // Configure the HTTP request pipeline.

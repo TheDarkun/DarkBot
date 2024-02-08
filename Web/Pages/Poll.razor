@@ -1,0 +1,38 @@
+﻿@page "/Poll"
+@using DarkBot.Models
+@rendermode InteractiveServer
+
+<PageTitle>Polls</PageTitle>
+
+<div class="card w-full bg-secondary border-2 border-neutral mb-4">
+    <EditForm class="card-body w-full flex flex-col gap-4" OnValidSubmit="@OnSetPoll" Model="@newPoll">
+        <p class="font-bold text-2xl">Create new Poll</p>
+        <DataAnnotationsValidator/>
+        <ValidationSummary/>
+        <p class="font-medium text-xl">Index:</p>
+        <InputNumber class="input border-2 border-neutral bg-secondary text-xl w-full" @bind-Value="newPoll!.Index" disabled/>
+        <p class="font-medium text-xl">Topic:</p>
+        <InputText class="input border-2 border-neutral bg-secondary text-xl w-full" @bind-Value="newPoll.Topic"></InputText>
+        <p class="font-medium text-xl">Date to close the poll:</p>
+        <InputDate class="input border-2 border-neutral bg-secondary text-xl w-full" @bind-Value="newPoll.EndDateTime"/>
+
+        <p class="font-bold text-2xl">Options</p>
+        <div id="options-div">
+            @foreach (OptionModel option in newPoll.Options)
+            {
+                <div id="option-@option.Index" class="card w-full bg-secondary border-2 border-neutral mb-4">
+                    <div id="option-@option.Index" class="card-body w-full flex flex-col gap-4">
+                        <p class="font-bold text-2xl">Option @option.Index</p>
+                        <p class="font-medium text-xl">Option:</p>
+                        <InputText class="input border-2 border-neutral bg-secondary text-xl w-full" @bind-Value="option.Option"></InputText>
+                        <p class="font-medium text-xl">Reaction emoji:</p>
+                        <InputText class="input border-2 border-neutral bg-secondary text-xl w-full" @bind-Value="option.EmojiName"></InputText>
+                        <input class="btn btn-error text-2xl text-secondary" @onclick="() => RemoveOption(option)" value="x">
+                    </div>
+                </div>
+            }
+        </div>
+        <input class="btn btn-success text-2xl text-secondary" type="button" @onclick="AddOption" value="+">
+        <button class="btn btn-primary text-2xl text-secondary " type="submit">Submit</button>
+    </EditForm>
+</div>
