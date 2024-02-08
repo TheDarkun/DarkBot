@@ -23,14 +23,18 @@
     private string currentWebsite { get; set; } = "";
     private bool isOpen { get; set; }
 
-    private void HandleNewLocation(object? sender, LocationChangedEventArgs e)
+    private void HandleNewLocation(object? sender, LocationChangedEventArgs? e)
     {
         currentWebsite = Manager.Uri[Manager.BaseUri.Length..];
         StateHasChanged();
     }
 
     protected override void OnInitialized()
-        => Manager.LocationChanged += HandleNewLocation;
+    {
+        // this line is here because if the user reloads page on for example /qot, the Qot button won't be set to active and the Home will be shown as active
+        HandleNewLocation(null, null);
+        Manager.LocationChanged += HandleNewLocation;
+    }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
