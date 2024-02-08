@@ -75,8 +75,8 @@ Instead of putting variables in appSettings.json, use secrets.json. This prevent
   - this is your typical discord bot token which you can get [here](https://discord.com/developers/applications)
   - for example: "XDDwMzcxNballs9768A68gypfa3OA.aEvGHxP.0PibRfDhdemN-UDTC4enm1HAyPaf-Y-PFL8fpO" ~~also don't use this one~~
 - redirectURI
-  - in the **OAuth2** tab, create your redirect link
-    - use the same one you have in **apiVersion**, but just include "api/Account/Authenticate"
+  - in the **OAuth2** tab, create your redirect link (everything about OAuth2 is [here](https://discord.com/developers/applications))
+    - use the same one you have in **baseURI**, but just include "api/Account/Authenticate"
     - for example: "https://localhost:5000/api/Account/Authenticate" ~~you **can** actually use this~~
   - after creating your redirect, go to **URL Generator** and create you link here (don't forget to select the correct redirect link)
     - in Scopes apply:
