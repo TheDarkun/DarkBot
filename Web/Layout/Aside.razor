@@ -4,7 +4,7 @@
         menu
     </span>
 </div>
-<aside id="sidebar-multi-level-sidebar" class="z-20 bg-accent border-r-2 border-r-neutral fixed top-[3.89rem] left-0 w-64 h-screen transition-transform @(isOpen ? "translate-x-0" : "-translate-x-full sm:translate-x-0")" aria-label="Sidebar">
+<aside id="sidebar-multi-level-sidebar" class="z-20 bg-base-200 border-r-2 border-r-neutral fixed top-[3.89rem] left-0 w-64 h-screen transition-transform @(isOpen ? "translate-x-0" : "-translate-x-full sm:translate-x-0")" aria-label="Sidebar">
     <div class="h-full px-3 py-4 overflow-y-auto">
         <ul class="space-y-2 font-medium">
             <AsideButton IsActive=@(currentWebsite == "" || currentWebsite == "home") Icon="home" Name="home" OnSetAside="@HandleSetAside" />
@@ -12,7 +12,7 @@
         </ul>
     </div>
 </aside>
-<div class="top-16 fixed  w-full h-full z-10 bg-neutral-content sm:hidden  transition-opacity @(isOpen ? "opacity-80" : "opacity-0 hidden")"></div>
+<div class="top-16 fixed  w-full h-full z-10 bg-base-300 sm:hidden  transition-opacity @(isOpen ? "opacity-80" : "opacity-0 hidden")"></div>
 
 
 @code{

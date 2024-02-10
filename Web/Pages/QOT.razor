@@ -5,7 +5,7 @@
 
 <PageTitle>QOT</PageTitle>
 
-<div class="card w-80 bg-secondary border-2 border-neutral mb-4">
+<div class="card w-80 bg-base-200 border-2 border-neutral mb-4">
     <div class="card-body">
         <h2 class="font-bold text-2xl">Current Info</h2>
         @if (qot is null)
@@ -28,13 +28,13 @@
 
 @if (qot is not null)
 {
-    <div class="card w-80 bg-secondary border-2 border-neutral mb-4">
+    <div class="card w-80 bg-base-200 border-2 border-neutral mb-4">
         <EditForm class="card-body w-full flex flex-col gap-4" OnValidSubmit="@OnSetQOT" Model="@newQOT">
             <DataAnnotationsValidator/>
             <ValidationSummary/>
-            <InputNumber class="input border-2 border-neutral bg-secondary text-xl w-full" @bind-Value="newQOT!.Index"/>
-            <InputDate class="input border-2 border-neutral bg-secondary text-xl w-full" @bind-Value="newQOT.Date"/>
-            <button class="btn btn-primary text-2xl text-secondary " type="submit">Submit</button>
+            <InputNumber class="input border-2 border-neutral bg-base-300 text-xl w-full" @bind-Value="newQOT!.Index"/>
+            <InputDate class="input border-2 border-neutral bg-base-300 text-xl w-full" @bind-Value="newQOT.Date"/>
+            <button class="btn btn-primary text-2xl text-primary-content " type="submit">Submit</button>
         </EditForm>
     </div>
 }

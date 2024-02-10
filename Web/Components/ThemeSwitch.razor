@@ -1,0 +1,30 @@
+﻿<label class="flex cursor-pointer gap-2 p-2">
+    <span class="material-symbols-outlined">
+        light_mode
+    </span>
+    <input @onclick="OnUpdateTheme" @bind="IsDark" type="checkbox" class="toggle theme-controller"/>
+    <span class="material-symbols-outlined">
+        dark_mode
+    </span>
+</label>
+@code{
+
+    private bool IsDark { get; set; }
+
+    [Inject] public IJSRuntime JsRuntime { get; set; } = null!;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            IsDark = await JsRuntime.InvokeAsync<bool>("getIsDark");
+            StateHasChanged();
+        }
+    }
+
+    private async Task OnUpdateTheme()
+    {
+        await JsRuntime.InvokeVoidAsync("switchTheme");
+    }
+
+}

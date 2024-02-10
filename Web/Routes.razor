@@ -1,5 +1,5 @@
-﻿<CascadingAuthenticationState>
-    <Router AppAssembly="@typeof(Program).Assembly">
+﻿<CascadingAuthenticationState >
+    <Router AppAssembly="@typeof(Program).Assembly" OnNavigateAsync="Test" >
         <Found Context="routeData">
             <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(Layout.MainLayout)"/>
             <FocusOnNavigate RouteData="@routeData" Selector="h1"/>
@@ -12,3 +12,21 @@
         </NotFound>
     </Router>
 </CascadingAuthenticationState>
+
+@code{
+
+    [Inject] public IJSRuntime JsRuntime { get; set; }
+
+    private async Task Test()
+    {
+        // await JsRuntime.InvokeVoidAsync("test");
+        Console.WriteLine("navigation");
+    }
+
+    protected override Task OnAfterRenderAsync(bool firstRender)
+    {
+        Console.WriteLine("test");
+        return base.OnAfterRenderAsync(firstRender);
+    }
+
+}

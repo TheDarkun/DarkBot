@@ -45,3 +45,16 @@ function getCookie(name) {
 function removeCookie(name) {
     document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
 }
+
+function switchTheme(){
+    let theme = localStorage.getItem("theme") || "light";
+    if (theme === "light") theme = "dark";
+    else if (theme === "dark") theme = "light";
+    localStorage.setItem("theme", theme)
+    document.documentElement.setAttribute("data-theme", theme);
+    
+    return theme;
+}
+function getIsDark(){
+    return localStorage.getItem("theme") === "dark" 
+}

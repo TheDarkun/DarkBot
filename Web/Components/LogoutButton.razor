@@ -1,0 +1,18 @@
+﻿<a @onclick="OnLogout" class="p-2 btn btn-ghost w-full text-lg">
+    <span class="material-symbols-outlined">
+        logout
+    </span>
+    Logout
+</a>
+
+@code {
+    [Inject] public NavigationManager Manager { get; set; } = null!;
+    [Inject] public IJSRuntime JsRuntime { get; set; } = null!;
+    
+    private async Task OnLogout()
+    {
+        // C# HttpClient decided NOT to do its job and does not remove the cookie nor it redirects for state update... JavaScript saved the day
+        await JsRuntime.InvokeVoidAsync("fetch", "/api/Account/Logout", new { method = "DELETE", credentials = "same-origin" });
+        Manager.NavigateTo("/", true);
+    }
+}
