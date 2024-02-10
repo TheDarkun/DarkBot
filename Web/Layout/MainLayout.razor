@@ -1,4 +1,5 @@
 ﻿@inherits LayoutComponentBase
+@using BlazorPageScript
 
 <Header/>
 <Aside/>
@@ -6,3 +7,4 @@
 <div class="sm:ml-64 p-4 flex flex-col items-center justify-center sm:block">
    @Body
 </div>
+<PageScript Src="./js/themeManager.js"/>

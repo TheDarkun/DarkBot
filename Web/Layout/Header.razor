@@ -1,11 +1,11 @@
 ﻿@rendermode InteractiveServer
 
-<header class=" h-16 border-b-2 border-b-neutral bg-accent flex justify-between items-center">
+<header class=" h-16 border-b-2 border-b-neutral text-base-content bg-base-200 flex justify-between items-center">
     <div class="flex gap-4 w-64 h-full items-center justify-center">
         <img src="icon.png" alt="">
         <a class="text-xl font-bold">DarkBot</a>
     </div>
-    <div class=" float-end w-48 flex justify-center items-center h-fit">
+    <div class=" float-end w-64 flex justify-center items-center h-fit">
         <AuthorizeView>
             <Authorized>
                 @{
@@ -38,37 +38,21 @@
 
                     </div>
 
-                    <ul tabindex="0" class="dropdown-content z-[100] menu p-2 border-2 border-neutral bg-accent rounded-box w-52 mt-5">
-                        <li>
-                            
-                            <a @onclick="OnLogout" class="">
-                                <span class="material-symbols-outlined">
-                                    logout
-                                </span>
-                                Logout
-                            </a>
+                    <ul tabindex="0" class="dropdown-content z-[100] p-2 border-2 border-neutral bg-base-200 rounded-box w-52 mt-5 flex flex-col gap-2">
+                        <li class="w-full">
+                            <LogoutButton/>
+                        </li>
+                        <hr>
+                        <li class="flex items-center justify-center p-2">
+                            <ThemeSwitch/>
                         </li>
                     </ul>
-
                 </div>
             </Authorized>
             <NotAuthorized>
-                <a href="/api/Account/Authorize" class="btn btn-primary text-white">Sign in</a>
+                <ThemeSwitch/>
+                <a href="/api/Account/Authorize" class="btn btn-primary text-primary-content">Sign in</a>
             </NotAuthorized>
         </AuthorizeView>
     </div>
 </header>
-
-@code{
-
-    [Inject] public NavigationManager Manager { get; set; } = null!;
-    [Inject] public IJSRuntime JsRuntime { get; set; } = null!;
-
-    private async Task OnLogout()
-    {
-        // C# HttpClient decided NOT to do its job and does not remove the cookie nor it redirects for state update... JavaScript saved the day
-        await JsRuntime.InvokeVoidAsync("fetch", "/api/Account/Logout", new { method = "DELETE", credentials = "same-origin" });
-        Manager.NavigateTo("/", true);
-    }
-
-}

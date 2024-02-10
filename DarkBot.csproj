@@ -9,6 +9,7 @@
     </PropertyGroup>
     
     <ItemGroup>
+      <PackageReference Include="BlazorPageScript" Version="1.0.0" />
       <PackageReference Include="DSharpPlus" Version="4.4.6" />
       <PackageReference Include="DSharpPlus.SlashCommands" Version="4.4.6" />
       <PackageReference Include="LiteDB" Version="5.0.17" />
