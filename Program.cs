@@ -35,6 +35,8 @@ builder.Services.AddTransient<QOTController>();
 builder.Services.AddTransient<AccountService>();
 builder.Services.AddTransient<AccountController>();
 
+builder.Services.AddTransient<HomeService>();
+
 builder.Services.AddCascadingAuthenticationState();
 
 builder.Services.AddAuthentication(options =>

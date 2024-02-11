@@ -1,0 +1,57 @@
+﻿@using DarkBot.Models
+@using Newtonsoft.Json
+<div class="card max-w-96 bg-base-200 border-2 border-neutral mb-4">
+    @if (Guild is null && !BotNotSet)
+    {
+        <div class="card-body items-center">
+            <span class="loading loading-dots loading-lg"></span>
+        </div>
+    }
+    else if (BotNotSet)
+    {
+        <div class="card-body items-center">
+            <h2 class="text-2xl font-bold text-error">There is no active guild!</h2>
+        </div>
+    }
+    else
+    {
+        <div class="card-body flex-row items-stretch justify-evenly">
+            <div class="avatar text-center">
+                <div class="w-24 rounded-xl">
+                    <img src=@($"https://cdn.discordapp.com/icons/{Guild.Id}/{Guild.Icon}")/>
+                </div>
+            </div>
+            <div>
+                <h3 class="font-bold text-2xl">Current Guild</h3>
+                <p>
+                    <span class="font-medium text-xl">Name:</span> <span class="text-lg">@Guild.Name</span><br/>
+                </p>
+            </div>
+        </div>
+    }
+</div>
+
+@code{
+
+    private ActiveGuildModel? Guild { get; set; }
+    
+    [Inject] public HttpClient Client { get; set; } = null!;
+    [Inject] public NavigationManager Manager { get; set; } = null!;
+
+    private bool BotNotSet { get; set; } = false;
+    
+    protected override async Task OnInitializedAsync()
+    {
+        var result = await Client.GetAsync($"{Manager.BaseUri}api/Home/CurrentGuild");
+        if (result.IsSuccessStatusCode)
+        {
+            var content = await result.Content.ReadAsStringAsync();
+            Guild = JsonConvert.DeserializeObject<ActiveGuildModel>(content);
+        }
+        else if ((int)result.StatusCode == 406)
+        {
+            BotNotSet = true;
+        }
+    }
+
+}

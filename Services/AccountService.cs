@@ -1,7 +1,6 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using DarkBot.Models;
-using LiteDB.Async;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using static System.Text.Encoding;
@@ -46,18 +45,14 @@ public class AccountService(IConfiguration config, HttpClient client)
     {
         // TODO: Encrypt tokens
 
-        using var db = new LiteDatabaseAsync("Data.db");
-
-        var accountCollection = db.GetCollection<AccountModel>("Accounts");
+        var accountCollection = Database.LiteDb.GetCollection<AccountModel>("Accounts");
 
         await accountCollection.InsertAsync(account);
     }
 
     public async Task DeleteAccount(string id)
     {
-        using var db = new LiteDatabaseAsync("Data.db");
-        
-        var accountCollection = db.GetCollection<AccountModel>("Accounts");
+        var accountCollection = Database.LiteDb.GetCollection<AccountModel>("Accounts");
         var accountExists = await accountCollection.FindOneAsync(x => x.UserId == id);
 
         if (accountExists is null)

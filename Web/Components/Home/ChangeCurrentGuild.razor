@@ -1,0 +1,60 @@
+﻿@using DarkBot.Models
+@using Newtonsoft.Json
+@using System.ComponentModel.DataAnnotations
+@using Microsoft.IdentityModel.Tokens
+@using Microsoft.VisualBasic
+@rendermode InteractiveServer
+
+@if (JoinedGuilds is not null)
+{
+    <div class="card w-80 bg-base-200 border-2 border-neutral mb-4">
+        <EditForm OnValidSubmit="OnSetCurrentGuild" class="card-body w-full flex flex-col gap-4" Model="SelectedGuild">
+            <DataAnnotationsValidator />
+            <h2 class="text-primary-content text-2xl font-bold">Select Active Guild</h2>
+            <ValidationSummary class="text-error font-bold text-center"/>
+            <InputSelect @bind-Value="SelectedGuild.Id" class="select text-xl w-full max-w-xs bg-base-300">
+                <option value="null" disabled selected>Select Guild</option>
+                @foreach (var joinedGuild in JoinedGuilds)
+                {
+                    <option value="@joinedGuild.GuildId">@joinedGuild.Name</option>
+                }
+            </InputSelect>
+
+            <button class="btn btn-primary text-2xl text-primary-content" type="submit">Change</button>
+        </EditForm>
+    </div>
+}
+
+
+@code{
+
+    public class SelectedGuildModel
+    {
+        [Required(ErrorMessage = "Please select a guild!")]
+        public string Id { get; set; }
+    }
+    
+    [Inject] public HttpClient Client { get; set; } = null!;
+    [Inject] public NavigationManager Manager { get; set; } = null!;
+
+    private List<GuildModel>? JoinedGuilds { get; set; }
+
+    private SelectedGuildModel SelectedGuild { get; set; } = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        var result = await Client.GetAsync($"{Manager.BaseUri}api/Home/GetJoinedGuilds");
+        if (result.IsSuccessStatusCode)
+        {
+            var content = await result.Content.ReadAsStringAsync();
+            JoinedGuilds = JsonConvert.DeserializeObject<List<GuildModel>>(content);
+        }
+    }
+
+    private async Task OnSetCurrentGuild()
+    {
+        await Client.PostAsJsonAsync($"{Manager.BaseUri}api/Home/CurrentGuild", SelectedGuild.Id);
+        Manager.NavigateTo(Manager.Uri, true);
+    }
+
+}

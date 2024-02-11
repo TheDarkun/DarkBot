@@ -8,9 +8,7 @@ public class QOTService
 {
     public async Task<QOTModel> GetQOTModel()
     {
-        using var db = new LiteDatabaseAsync("Data.db");
-        // retrieve the entire QOT and its documents (each document is like one json object)
-        var qotCollection = db.GetCollection<QOTModel>("QOT");
+        var qotCollection = Database.LiteDb.GetCollection<QOTModel>("QOT");
             
         // select the first document from the array
         var qot = await qotCollection.FindOneAsync(Query.All());
@@ -28,8 +26,7 @@ public class QOTService
     
     public async Task UpdateQOTModel(QOTModel qot)
     {
-        using var db = new LiteDatabaseAsync(@"Data.db");
-        var qotCollection = db.GetCollection<QOTModel>("QOT");
+        var qotCollection = Database.LiteDb.GetCollection<QOTModel>("QOT");
         await qotCollection.UpdateAsync(qot);
     }
 }
