@@ -29,7 +29,7 @@ public class HomeService(IConfiguration config, HttpClient client)
         var guildCollection = Database.LiteDb.GetCollection<ActiveGuildModel>("CurrentGuild");
         await guildCollection.DeleteAllAsync();
 
-        client.DefaultRequestHeaders.Add("Authorization", "Bot MTIwNDA3Nzg4OTc1MDk2NjMzMg.GSDsRk.RRe0Cb8GlW13e7oLswvnnNuKLhYparzJVUDbRo");
+        client.DefaultRequestHeaders.Add("Authorization", $"Bot {Config.GetSection("botToken").Value!}");
         var result = await client.GetAsync($"https://discordapp.com/api/guilds/{id}");
         if (result.IsSuccessStatusCode)
         {
