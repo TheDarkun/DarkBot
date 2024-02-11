@@ -3,17 +3,6 @@
 <PageTitle>Home</PageTitle>
 
 <CurrentGuild/>
-<div class="card w-80 bg-base-200 border-2 border-neutral mb-4">
-    <form class="card-body w-full flex flex-col gap-4">
-        <h2 class="text-primary-content text-2xl font-bold">Select QOT Guild</h2>
-        <select class="select text-xl w-full max-w-xs bg-base-300">
-            <option disabled selected>Select Active Guild</option>
-            <option>Homer</option>
-            <option>Marge</option>
-            <option>Bart</option>
-            <option>Lisa</option>
-            <option>Maggie</option>
-        </select>
-        <button class="btn btn-primary text-2xl text-primary-content " type="submit">Remove</button>
-    </form>
-</div>
+<AuthorizeView>
+    <ChangeCurrentGuild/>
+</AuthorizeView>

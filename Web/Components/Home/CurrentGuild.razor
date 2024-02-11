@@ -1,23 +1,24 @@
 ﻿@using DarkBot.Models
 @using Newtonsoft.Json
-<div class="card max-w-fit bg-base-200 border-2 border-neutral mb-4">
+<div class="card max-w-96 bg-base-200 border-2 border-neutral mb-4">
     @if (Guild is null)
     {
-        
+        <div class="card-body items-center">
+            <span class="loading loading-dots loading-lg"></span>
+        </div>
     }
     else
     {
-        <div class="card-body flex-row">
+        <div class="card-body flex-row items-stretch justify-evenly">
             <div class="avatar text-center">
                 <div class="w-24 rounded-xl">
-                    <img src="default.jpg"/>
+                    <img src=@($"https://cdn.discordapp.com/icons/{Guild.Id}/{Guild.Icon}")/>
                 </div>
             </div>
             <div>
                 <h3 class="font-bold text-2xl">Current Guild</h3>
                 <p>
                     <span class="font-medium text-xl">Name:</span> <span class="text-lg">@Guild.Name</span><br/>
-                    <span class="font-medium text-xl">Members:</span> <span class="text-lg">@Guild.MaxMembers</span>
                 </p>
             </div>
         </div>
@@ -33,7 +34,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        var result = await Client.GetAsync($"{Manager.BaseUri}api/Home/Guild");
+        var result = await Client.GetAsync($"{Manager.BaseUri}api/Home/CurrentGuild");
         if (result.IsSuccessStatusCode)
         {
             var content = await result.Content.ReadAsStringAsync();

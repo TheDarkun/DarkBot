@@ -7,8 +7,7 @@ public class BotService
 {
     public async Task CheckForNewGuilds(List<GuildModel> guilds)
     {
-        using var db = new LiteDatabaseAsync("Data.db");
-        var guildCollection = db.GetCollection<GuildModel>("Guild");
+        var guildCollection = Database.LiteDb.GetCollection<GuildModel>("Guild");
         var storedGuilds = await guildCollection.FindAllAsync();
 
         var addedGuilds = new List<GuildModel>();
@@ -25,7 +24,7 @@ public class BotService
         foreach (var newGuild in addedGuilds)
         {
             await guildCollection.InsertAsync(newGuild);
-            storedGuilds = guildModels.Append(newGuild);
+            guildModels.Add(newGuild);
         }
         
         var removedGuilds = new List<GuildModel>();
@@ -47,16 +46,16 @@ public class BotService
 
     public async Task RemoveGuild(string id)
     {
-        using var db = new LiteDatabaseAsync("Data.db");
-        var guildCollection = db.GetCollection<GuildModel>("Guild");
+        // using var db = new LiteDatabaseAsync("Data.db");
+        var guildCollection = Database.LiteDb.GetCollection<GuildModel>("Guild");
         var guild = await guildCollection.FindOneAsync(x => x.GuildId == id);
         await guildCollection.DeleteAsync(guild.Id);
     }
 
     public async Task AddGuild(GuildModel guild)
     {
-        using var db = new LiteDatabaseAsync("Data.db");
-        var guildCollection = db.GetCollection<GuildModel>("Guild");
+        // using var db = new LiteDatabaseAsync("Data.db");
+        var guildCollection = Database.LiteDb.GetCollection<GuildModel>("Guild");
         await guildCollection.InsertAsync(guild);
     }
 }

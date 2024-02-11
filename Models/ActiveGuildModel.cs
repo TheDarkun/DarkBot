@@ -2,12 +2,20 @@
 
 namespace DarkBot.Models;
 
-public class ActiveGuildModel(string id, string name, int? max_members, string? icon)
+public class ActiveGuildModel
 {
-    public string GuildId { get; set; } = id;
-    public string Name { get; set; } = name;
-    public int? MaxMembers { get; set; } = max_members;
-    public string? Icon { get; set; } = icon;
+    public ActiveGuildModel(string id, string name, string? icon)
+    {
+        GuildId = id;
+        Name = name;
+        Icon = icon;
+    }
     
+    // this is necessary for the litedb to retrieve data, it manually sets each variable, for example ActiveGuildModel.Name = "name"
+    public ActiveGuildModel() { }
+    
+    public string GuildId { get; set; }
+    public string Name { get; set; }
+    public string? Icon { get; set; }
     public string Id { get; set; } = ObjectId.NewObjectId().ToString();
 }
