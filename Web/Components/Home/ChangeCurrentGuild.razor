@@ -36,7 +36,8 @@
     
     [Inject] public HttpClient Client { get; set; } = null!;
     [Inject] public NavigationManager Manager { get; set; } = null!;
-
+    [Inject] public IJSRuntime JsRuntime { get; set; } = null!;
+    
     private List<GuildModel>? JoinedGuilds { get; set; }
 
     private SelectedGuildModel SelectedGuild { get; set; } = new();
@@ -53,6 +54,9 @@
 
     private async Task OnSetCurrentGuild()
     {
+        var result = await JsRuntime.InvokeAsync<bool>("confirm", "Are you sure?");
+        if (!result) return;
+        
         await Client.PostAsJsonAsync($"{Manager.BaseUri}api/Home/CurrentGuild", SelectedGuild.Id);
         Manager.NavigateTo(Manager.Uri, true);
     }
