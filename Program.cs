@@ -94,9 +94,13 @@ app.MapControllerRoute(
     name: "default",
     pattern: "api/{controller}/{action?}/{id?}"
 );
-// Create bot
-var bot = new DiscordBot(builder.Configuration["botToken"]!, app.Services);
-await bot.ConnectAsync();
+
+// Run bot
+if (Environment.GetEnvironmentVariable("PROFILE") == "RunDiscord")
+{
+    var bot = new DiscordBot(builder.Configuration["botToken"]!, app.Services);
+    await bot.ConnectAsync();
+}
 
 app.Run();
 
