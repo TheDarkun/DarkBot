@@ -22,12 +22,21 @@
                 <span class="font-medium text-xl">Date:</span> <span class="text-lg">@qot.Date.ToString("d-M-yyyy")</span>
             </p>
             <p>
-                <span class="font-medium text-xl">Guild:</span> <span class="text-lg">5</span>
+                <span class="font-medium text-xl">Channel:</span> <span class="text-lg">
+                    @if (ActiveChannel is null)
+                    {
+                        <span class="loading loading-dots loading-sm"></span>
+                    }
+                    else
+                    {
+                        @ActiveChannel
+                    }
+                </span>
             </p>
         }
     </div>
 </div>
-
+<ChangeChannel/>
 
 @if (qot is not null)
 {

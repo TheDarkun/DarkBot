@@ -15,10 +15,24 @@ public partial class QOT
 
     private QOTModel? newQOT;
 
+    private string? ActiveChannel { get; set; }
+    
     protected override async Task OnInitializedAsync()
     {
         qot = await Client.GetAsync<QOTModel>("api/QOT/Data");
         newQOT = qot;
+    }
+
+        await GetSelectedChannel();
+    }
+
+    private async Task GetSelectedChannel()
+    {
+        var result = await Client.GetAsync($"{Manager.BaseUri}api/QOT/Channel");
+        if (result.IsSuccessStatusCode)
+        {
+            ActiveChannel = await result.Content.ReadAsStringAsync();
+        }
     }
 
     private async Task OnSetQOT()
