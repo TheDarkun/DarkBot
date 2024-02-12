@@ -42,7 +42,7 @@
 {
     <div class="card w-80 bg-base-200 border-2 border-neutral mb-4">
         <EditForm class="card-body w-full flex flex-col gap-4" OnValidSubmit="@OnSetQOT" Model="@newQOT">
-            <h2 class="text-primary-content text-2xl font-bold">Update QOT</h2>
+            <h2 class="text-2xl font-bold">Update QOT</h2>
             <DataAnnotationsValidator/>
             <ValidationSummary class="text-error font-bold text-center"/>
             <InputNumber class="input border-2 border-neutral bg-base-300 text-xl w-full" @bind-Value="newQOT!.Index"/>

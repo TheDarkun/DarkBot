@@ -1,5 +1,6 @@
 ﻿using DarkBot.Models;
 using DarkBot.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
@@ -21,27 +22,31 @@ public class QOTController(QOTService service) : ControllerBase
     }
 
     [HttpGet]
+    // [Authorize]
     public async Task<IActionResult> Channels()
     {
-        return Ok(new List<ChannelModel>()
-        {
-            new ChannelModel("10", "balls"),
-            new ChannelModel("100", "balls"),
-            new ChannelModel("10000", "balls"),
-            new ChannelModel("1000", "balls")
-
-        });
+        var channels = await service.GetChannels();
+        if (channels is null)
+            return new StatusCodeResult(406); 
+        return Ok(channels);
     }
 
     [HttpGet]
     public async Task<IActionResult> Channel()
     {
-        return Ok("balls");
+        var name = await service.GetCurrentChannel();
+        if (name is null)
+            return new StatusCodeResult(406); 
+        
+        return Ok(name);
     }
     
     [HttpPost]
     public async Task<IActionResult> Channel([FromBody] string id)
     {
+        Console.WriteLine(id);
+        await service.UpdateChannel(id);
+        
         return Accepted();
     }
     
