@@ -17,6 +17,8 @@ public class BackendHttpClient(HttpClient client)
         try
         {
             var result = await Client.GetStringAsync(path);
+            if (typeof(T) == typeof(string))
+                return result as T;
             var content = JsonConvert.DeserializeObject<T>(result);
             return content;
         }
