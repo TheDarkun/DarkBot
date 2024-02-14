@@ -46,7 +46,6 @@ public class BotService
 
     public async Task RemoveGuild(string id)
     {
-        // using var db = new LiteDatabaseAsync("Data.db");
         var guildCollection = Database.LiteDb.GetCollection<GuildModel>("Guild");
         var guild = await guildCollection.FindOneAsync(x => x.GuildId == id);
         await guildCollection.DeleteAsync(guild.Id);
@@ -54,7 +53,6 @@ public class BotService
 
     public async Task AddGuild(GuildModel guild)
     {
-        // using var db = new LiteDatabaseAsync("Data.db");
         var guildCollection = Database.LiteDb.GetCollection<GuildModel>("Guild");
         await guildCollection.InsertAsync(guild);
     }

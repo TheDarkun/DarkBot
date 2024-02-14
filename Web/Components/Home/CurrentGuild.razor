@@ -1,5 +1,6 @@
 ﻿@using DarkBot.Models
 @using Newtonsoft.Json
+@using DarkBot.Clients
 <div class="card max-w-96 bg-base-200 border-2 border-neutral mb-4">
     @if (Guild is null && !BotNotSet)
     {
@@ -35,22 +36,21 @@
 
     private ActiveGuildModel? Guild { get; set; }
     
-    [Inject] public HttpClient Client { get; set; } = null!;
+    [Inject] public BackendHttpClient Client { get; set; } = null!;
     [Inject] public NavigationManager Manager { get; set; } = null!;
 
     private bool BotNotSet { get; set; } = false;
     
     protected override async Task OnInitializedAsync()
     {
-        var result = await Client.GetAsync($"{Manager.BaseUri}api/Home/CurrentGuild");
-        if (result.IsSuccessStatusCode)
-        {
-            var content = await result.Content.ReadAsStringAsync();
-            Guild = JsonConvert.DeserializeObject<ActiveGuildModel>(content);
-        }
-        else if ((int)result.StatusCode == 406)
+        var result = await Client.GetAsync<ActiveGuildModel?>("api/Home/CurrentGuild");
+        if (result is null)
         {
             BotNotSet = true;
+        }
+        else
+        {
+            Guild = result;
         }
     }
 

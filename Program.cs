@@ -1,5 +1,5 @@
-using System.Net.Http.Headers;
 using System.Text;
+using DarkBot.Clients;
 using DarkBot.Controllers;
 using DarkBot.Discord;
 using DarkBot.Services;
@@ -15,18 +15,23 @@ builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddControllers();
-builder.Services.AddScoped(sp =>
+builder.Services.AddHttpClient<BackendHttpClient>((provider, client) =>
 {
-    var httpClient = new HttpClient();
-    var httpContextAccessor = sp.GetRequiredService<IHttpContextAccessor>();
-    var accessToken = httpContextAccessor.HttpContext.Request.Cookies["account"];
-    if (!string.IsNullOrEmpty(accessToken))
-    {
-        httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
-    }
-    return httpClient;
-});
+    var httpContextAccessor = provider.GetRequiredService<IHttpContextAccessor>();
+    var token = httpContextAccessor.HttpContext!.Request.Cookies["account"];
+    var baseUri = builder.Configuration["baseURI"]!;
 
+    client.DefaultRequestHeaders.Add("Authorization", $"Bearer {token}");
+    client.BaseAddress = new Uri(baseUri);
+});
+builder.Services.AddHttpClient<DiscordHttpClient>(client =>
+{
+    var token = builder.Configuration["botToken"]!;
+    var apiVersion = builder.Configuration["apiVersion"]!;
+
+    client.DefaultRequestHeaders.Add("Authorization", $"Bot {token}");
+    client.BaseAddress = new Uri($"https://discord.com/api/v{apiVersion}");
+});
 
 // Transients
 builder.Services.AddTransient<QOTService>();
@@ -40,33 +45,35 @@ builder.Services.AddTransient<HomeService>();
 builder.Services.AddCascadingAuthenticationState();
 
 builder.Services.AddAuthentication(options =>
-{
-    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-}).AddCookie()
+    {
+        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    }).AddCookie()
     .AddJwtBearer(options =>
-{
-    options.TokenValidationParameters = new TokenValidationParameters
     {
-        ValidateAudience = false,
-        ValidateIssuer = false,
-        ValidateIssuerSigningKey = true,
-        ValidateLifetime = true,
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["randomJwtToken"]!))
-    };
-    options.Events = new JwtBearerEvents
-    {
-        OnMessageReceived = context =>
+        options.TokenValidationParameters = new TokenValidationParameters
         {
-            if (context.Request.Cookies.TryGetValue("account", out string token))
+            ValidateAudience = false,
+            ValidateIssuer = false,
+            ValidateIssuerSigningKey = true,
+            ValidateLifetime = true,
+            IssuerSigningKey =
+                new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["randomJwtToken"]!))
+        };
+        options.Events = new JwtBearerEvents
+        {
+            OnMessageReceived = context =>
             {
-                context.Token = token;
+                if (context.Request.Cookies.TryGetValue("account", out string token))
+                {
+                    context.Token = token;
+                }
+
+                return Task.CompletedTask;
             }
-            return Task.CompletedTask;
-        }
-    };
-});
+        };
+    });
 
 builder.Services.AddAuthorizationCore();
 var app = builder.Build();
@@ -105,4 +112,3 @@ if (Environment.GetEnvironmentVariable("PROFILE") == "RunDiscord")
 }
 
 app.Run();
-
