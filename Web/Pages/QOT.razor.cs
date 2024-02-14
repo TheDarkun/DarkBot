@@ -1,13 +1,13 @@
-﻿using DarkBot.Models;
+﻿using DarkBot.Clients;
+using DarkBot.Models;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
-using Newtonsoft.Json;
 
 namespace DarkBot.Web.Pages;
 
 public partial class QOT
 {
-    [Inject] public HttpClient Client { get; set; } = null!;
+    [Inject] public BackendHttpClient Client { get; set; } = null!;
     [Inject] public NavigationManager Manager { get; set; } = null!;
     [Inject] public IJSRuntime JsRuntime { get; set; } = null!;
     
@@ -17,21 +17,14 @@ public partial class QOT
 
     protected override async Task OnInitializedAsync()
     {
-        var result = await Client.GetAsync($"{Manager.BaseUri}api/QOT/Data");
-        Console.WriteLine(result.IsSuccessStatusCode);
-        if (result.IsSuccessStatusCode)
-        {
-            var content = await result.Content.ReadAsStringAsync();
-            qot = JsonConvert.DeserializeObject<QOTModel>(content);
-            newQOT = qot;
-        }
-
+        qot = await Client.GetAsync<QOTModel>("api/QOT/Data");
+        newQOT = qot;
     }
 
     private async Task OnSetQOT()
     {
         var result = await JsRuntime.InvokeAsync<bool>("confirm", "Are you sure?");
         if (result)
-            await Client.PutAsJsonAsync($"{Manager.BaseUri}api/QOT/Data", newQOT);
+            await Client.PutAsJsonAsync("api/QOT/Data", newQOT);
     }
 }
