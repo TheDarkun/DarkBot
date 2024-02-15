@@ -46,7 +46,7 @@ public class DiscordBot(string token, IServiceProvider services)
         {
             Services = services
         });
-        slash.RegisterCommands<QOTCommands>();
+        slash.RegisterCommands<QotCommands>();
         await discord.ConnectAsync();
     }
 }

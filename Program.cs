@@ -34,8 +34,8 @@ builder.Services.AddHttpClient<DiscordHttpClient>(client =>
 });
 
 // Transients
-builder.Services.AddTransient<QOTService>();
-builder.Services.AddTransient<QOTController>();
+builder.Services.AddTransient<QotService>();
+builder.Services.AddTransient<QotController>();
 
 builder.Services.AddTransient<AccountService>();
 builder.Services.AddTransient<AccountController>();

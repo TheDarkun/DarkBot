@@ -10,7 +10,7 @@
                 <h2 class="font-bold text-2xl">Change Channel</h2>
 
                 <ValidationSummary class="text-error font-bold text-center"/>
-                <InputSelect @bind-Value="SelectedChannel.Id" class="select text-xl w-full bg-base-300 border-2 border-neutral">
+                <InputSelect @bind-Value="SelectedChannel.Id" class="select text-xl w-full bg-base-300">
                     <option value="null" disabled selected>Select Channel</option>
                     @foreach (var channel in Channels)
                     {

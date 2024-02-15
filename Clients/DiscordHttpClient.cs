@@ -1,5 +1,6 @@
 ﻿using DarkBot.Models;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace DarkBot.Clients;
 
@@ -57,6 +58,32 @@ public class DiscordHttpClient(IConfiguration config, HttpClient client)
             var result = await Client.GetStringAsync($"guilds/{id}");
             var guild = JsonConvert.DeserializeObject<ActiveGuildModel>(result);
             return guild;
+        }
+        catch (Exception)
+        {
+            return null;
+        }
+    }
+    public async Task<string?> GetCurrentChannelName(string id)
+    {
+        try
+        {
+            var result = await Client.GetStringAsync($"channels/{id}");
+            var channel = JObject.Parse(result);
+            return (string?)channel["name"];
+        }
+        catch (Exception)
+        {
+            return null;
+        }
+    }
+    public async Task<List<ChannelModel>?> GetChannels(string id)
+    {
+        try
+        {
+            var result = await Client.GetStringAsync($"guilds/{id}/channels");
+            var channels = JsonConvert.DeserializeObject<List<ChannelModel>>(result)!.Where(x => x.Type == "0").ToList();
+            return channels;
         }
         catch (Exception)
         {
