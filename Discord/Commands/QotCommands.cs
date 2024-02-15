@@ -4,24 +4,23 @@ using DSharpPlus.SlashCommands;
 
 namespace DarkBot.Discord.Commands;
 
-public class QOTCommands(QOTService service) : ApplicationCommandModule
+public class QotCommands(QotService service) : ApplicationCommandModule
 {
-    private QOTService service { get; set; } = service;
+    private QotService Service { get; } = service;
     
-    [SlashCommand("qoot", "Create question of the")]
-    public async Task CreateQOT(InteractionContext ctx, [Option("question", "Put your question here")] string question)
+    [SlashCommand("qot", "Create question of the")]
+    public async Task CreateQot(InteractionContext ctx, [Option("question", "Put your question here")] string question)
     {
         await ctx.DeferAsync(true);
 
-        var qot = await service.GetQOTModel();
-        await ctx.EditResponseAsync(new DiscordWebhookBuilder()
-            .WithContent($"Please select a channel on the website before creating QOT"));
+        var qot = await Service.GetQotModel();
+
         if (qot.ChannelId is null)
         {
             await ctx.EditResponseAsync(new DiscordWebhookBuilder()
                 .WithContent($"Please select a channel on the website before creating QOT"));
         }
-        else if (qot.ChannelId == ctx.Channel.Id.ToString())
+        else if (qot.ChannelId != ctx.Channel.Id.ToString())
         {
             await ctx.EditResponseAsync(new DiscordWebhookBuilder()
                 .WithContent($"QOT is assigned to <#{qot.ChannelId}>"));
@@ -33,8 +32,8 @@ public class QOTCommands(QOTService service) : ApplicationCommandModule
         }
         else
         {
-            qot.UpdateQOTModel();
-            await service.UpdateQOTModel(qot);
+            qot.UpdateQotModel();
+            await Service.UpdateQotModel(qot);
              
             await ctx.DeleteResponseAsync();
              

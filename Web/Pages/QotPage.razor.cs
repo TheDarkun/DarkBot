@@ -5,22 +5,22 @@ using Microsoft.JSInterop;
 
 namespace DarkBot.Web.Pages;
 
-public partial class QOT
+public partial class QotPage
 {
     [Inject] public BackendHttpClient Client { get; set; } = null!;
     [Inject] public NavigationManager Manager { get; set; } = null!;
     [Inject] public IJSRuntime JsRuntime { get; set; } = null!;
     
-    private QOTModel? qot { get; set; }
+    private QotModel? Qot { get; set; }
 
-    private QOTModel? newQOT;
+    private QotModel? newQot;
 
     private string? ActiveChannel { get; set; }
     
     protected override async Task OnInitializedAsync()
     {
-        qot = await Client.GetAsync<QOTModel>("api/QOT/Data");
-        newQOT = qot;
+        Qot = await Client.GetAsync<QotModel>("api/QOT/Data");
+        newQot = Qot;
         ActiveChannel = await Client.GetAsync<string>("api/QOT/Channel");
     }
 
@@ -28,6 +28,6 @@ public partial class QOT
     {
         var result = await JsRuntime.InvokeAsync<bool>("confirm", "Are you sure?");
         if (result)
-            await Client.PutAsJsonAsync("api/QOT/Data", newQOT);
+            await Client.PutAsJsonAsync("api/QOT/Data", newQot);
     }
 }
