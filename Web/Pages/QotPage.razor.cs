@@ -22,19 +22,7 @@ public partial class QotPage
         Qot = await Client.GetAsync<QotModel>("api/QOT/Data");
         newQot = Qot;
         ActiveChannel = await Client.GetAsync<string>("api/QOT/Channel");
-    }
-
-        await GetSelectedChannel();
-    }
-
-    private async Task GetSelectedChannel()
-    {
-        var result = await Client.GetAsync($"{Manager.BaseUri}api/QOT/Channel");
-        if (result.IsSuccessStatusCode)
-        {
-            ActiveChannel = await result.Content.ReadAsStringAsync();
-        }
-    }
+    } 
 
     private async Task OnSetQOT()
     {
