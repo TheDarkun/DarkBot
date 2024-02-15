@@ -24,6 +24,18 @@ public partial class QotPage
         ActiveChannel = await Client.GetAsync<string>("api/QOT/Channel");
     }
 
+        await GetSelectedChannel();
+    }
+
+    private async Task GetSelectedChannel()
+    {
+        var result = await Client.GetAsync($"{Manager.BaseUri}api/QOT/Channel");
+        if (result.IsSuccessStatusCode)
+        {
+            ActiveChannel = await result.Content.ReadAsStringAsync();
+        }
+    }
+
     private async Task OnSetQOT()
     {
         var result = await JsRuntime.InvokeAsync<bool>("confirm", "Are you sure?");

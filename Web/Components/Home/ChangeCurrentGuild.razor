@@ -11,9 +11,9 @@
     <div class="card w-80 bg-base-200 border-2 border-neutral mb-4">
         <EditForm OnValidSubmit="OnSetCurrentGuild" class="card-body w-full flex flex-col gap-4" Model="SelectedGuild">
             <DataAnnotationsValidator />
-            <h2 class="text-primary-content text-2xl font-bold">Select Active Guild</h2>
+            <h2 class="text-2xl font-bold">Select Active Guild</h2>
             <ValidationSummary class="text-error font-bold text-center"/>
-            <InputSelect @bind-Value="SelectedGuild.Id" class="select text-xl w-full max-w-xs bg-base-300">
+            <InputSelect @bind-Value="SelectedGuild.Id" class="select text-xl w-full max-w-xs bg-base-300 border-2 border-neutral">
                 <option value="null" disabled selected>Select Guild</option>
                 @foreach (var joinedGuild in JoinedGuilds)
                 {
