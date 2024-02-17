@@ -2,13 +2,17 @@
 using DarkBot.Models;
 using DarkBot.Services;
 using DSharpPlus;
+using DSharpPlus.Entities;
 using DSharpPlus.SlashCommands;
+using LiteDB;
 
 namespace DarkBot.Discord;
 
 public class DiscordBot(string token, IServiceProvider services)
 {
-    private BotService Service { get; set; } = new BotService();
+    private BotService BotService { get; set; } = services.GetService<BotService>()!;
+    private QotService QotService { get; set; } = services.GetService<QotService>()!;
+
     
     private DiscordClient discord { get; set; } = new(new()
     {
@@ -29,17 +33,42 @@ public class DiscordBot(string token, IServiceProvider services)
             {
                 guilds.Add(new (guild.Value.Id.ToString(), guild.Value.Name));
             }
-            await Service.CheckForNewGuilds(guilds);
+            await BotService.CheckForNewGuilds(guilds);
         };
 
         discord.GuildDeleted += async (s, e) =>
         {
-            await Service.RemoveGuild(e.Guild.Id.ToString());
+            await BotService.RemoveGuild(e.Guild.Id.ToString());
         };
         
         discord.GuildCreated += async (s, e) =>
         {
-            await Service.AddGuild(new (e.Guild.Id.ToString(), e.Guild.Name));
+            await BotService.AddGuild(new (e.Guild.Id.ToString(), e.Guild.Name));
+        };
+
+        
+        discord.MessageCreated += async (s, e) =>
+        {
+            if (e.Author.IsBot)
+                return;
+
+            var id = await QotService.GetCurrentChannelId();
+
+            if (e.Message.ChannelId.ToString() == id)
+            {
+                var replies = await QotService.GetReplies();
+                if (replies.Contains(e.Author.Id))
+                {
+                    var user = e.Author! as DiscordMember;
+                    var dm = await user!.CreateDmChannelAsync();
+                    await dm.SendMessageAsync("you are braindead");
+                    await e.Message.DeleteAsync();
+                    return;
+                }
+
+                await QotService.AddReply(e.Author.Id);
+                return; // ALWAYS RETURN AFTER YOUR CONDITION IS FINISHED
+            }
         };
         
         var slash = discord.UseSlashCommands(new SlashCommandsConfiguration

@@ -54,18 +54,60 @@ public class QotService(HttpClient client)
     {
         try
         {
-            var qotCollection = Database.LiteDb.GetCollection<QotModel>("QOT");
-            var qot = await qotCollection.FindOneAsync(Query.All());
-            if (qot.ChannelId is null)
+            var channelId = await GetCurrentChannelId();
+            if (channelId is null)
                 return null;
-
-            var result = await Client.GetStringAsync($"channels/{qot.ChannelId}");
+            
+            var result = await Client.GetStringAsync($"channels/{channelId}");
             var channel = JObject.Parse(result);
             return (string?)channel["name"];
         }
         catch (Exception)
         {
             return null;
+        }
+    }
+    
+    public async Task<string?> GetCurrentChannelId()
+    {
+        try
+        {
+            var qot = await GetQotModel();
+            if (qot.ChannelId is null)
+                return null;
+            return qot.ChannelId;
+        }
+        catch (Exception)
+        {
+            return null;
+        }
+    }
+
+    public async Task<List<ulong>> GetReplies()
+    {
+        try
+        {
+            var qot = await GetQotModel();
+            return qot.Replies;
+        }
+        catch (Exception e)
+        {
+            return new ();
+        }
+    }
+
+    public async Task AddReply(ulong id)
+    {
+        try
+        {
+            var qot = await GetQotModel();
+            qot.Replies.Add(id);
+            await UpdateQotModel(qot);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
         }
     }
 }

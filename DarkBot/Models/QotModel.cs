@@ -9,14 +9,15 @@ public class QotModel(int index, DateTime date)
     public int Index { get; set; } = index;
 
     public DateTime Date { get; set; } = date;
-    
+
     public string? ChannelId { get; set; }
     public string Id { get; set; } = ObjectId.NewObjectId().ToString();
-    public List<string> SubmittedUsers = new ();
+    public List<ulong> Replies { get; set; } = new();
 
     public void UpdateQotModel()
     {
         Date = DateTime.Today;
         Index++;
+        Replies.Clear();
     }
 }
