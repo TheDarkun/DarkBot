@@ -1,12 +1,12 @@
-﻿using DarkBot.Clients;
-using DarkBot.Models;
+﻿using DarkBot.Models;
 using LiteDB;
+using Newtonsoft.Json;
 
 namespace DarkBot.Services;
 
-public class HomeService(DiscordHttpClient client)
+public class HomeService(HttpClient client)
 {
-    private DiscordHttpClient Client { get; } = client;
+    private HttpClient Client { get; } = client;
     public async Task<ActiveGuildModel?> GetCurrentGuild()
     {
         var guildCollection = Database.LiteDb.GetCollection<ActiveGuildModel>("CurrentGuild");
@@ -25,7 +25,8 @@ public class HomeService(DiscordHttpClient client)
     {
         var guildCollection = Database.LiteDb.GetCollection<ActiveGuildModel>("CurrentGuild");
         await guildCollection.DeleteAllAsync();
-        var guild = await Client.GetGuild(id);
+        var result = await Client.GetStringAsync($"guilds/{id}");
+        var guild = JsonConvert.DeserializeObject<ActiveGuildModel>(result);
         
         if (guild is not null)
             await guildCollection.InsertAsync(guild);

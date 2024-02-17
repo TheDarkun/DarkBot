@@ -1,19 +1,34 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using DarkBot.Clients;
 using DarkBot.Models;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json;
 using static System.Text.Encoding;
 
 namespace DarkBot.Services;
 
-public class AccountService(IConfiguration config, DiscordHttpClient client)
+public class AccountService(IConfiguration config, HttpClient client)
 {
     private IConfiguration Config { get; } = config;
-    private DiscordHttpClient Client { get; } = client;
+    private HttpClient Client { get; } = client;
 
     public async Task<AccountModel?> Authenticate(string code)
-        => await Client.Authenticate(code);
+    {
+        var formData = new Dictionary<string, string>
+        {
+            { "client_id", Config.GetSection("clientId").Value! },
+            { "client_secret", Config.GetSection("clientSecret").Value! },
+            { "grant_type", "authorization_code" },
+            { "code", code },
+            { "redirect_uri", $"{Config.GetSection("baseURI").Value!}/api/authorize" }
+        };
+        var formContent = new FormUrlEncodedContent(formData);
+        var response = await Client.PostAsync($"oauth2/token", formContent);
+
+        var content = await response.Content.ReadAsStringAsync();
+        var account = JsonConvert.DeserializeObject<AccountModel>(content);
+        return account;
+    }
 
     public async Task SaveAccount(AccountModel account)
     {
@@ -36,7 +51,14 @@ public class AccountService(IConfiguration config, DiscordHttpClient client)
     }
 
     public async Task<UserModel?> GetUser(AccountModel account)
-        => await Client.GetUser(account);
+    {
+        Client.DefaultRequestHeaders.Remove("Authorization");
+        Client.DefaultRequestHeaders.Add("Authorization", $"Bearer {account.AccessToken}");
+        var response =
+            await Client.GetStringAsync($"users/@me");
+        var user = JsonConvert.DeserializeObject<UserModel>(response);
+        return user;
+    }
 
     public string CreateJwtToken(UserModel user)
     {
