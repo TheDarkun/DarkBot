@@ -1,12 +1,13 @@
-﻿using DarkBot.Clients;
-using DarkBot.Models;
+﻿using DarkBot.Models;
 using LiteDB;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace DarkBot.Services;
 
-public class QotService(DiscordHttpClient client)
+public class QotService(HttpClient client)
 {
-    private DiscordHttpClient Client { get; } = client;
+    private HttpClient Client { get; } = client;
     
     public async Task<QotModel> GetQotModel()
     {
@@ -36,8 +37,9 @@ public class QotService(DiscordHttpClient client)
     {
         var currentGuildCollection = Database.LiteDb.GetCollection<ActiveGuildModel>("CurrentGuild");
         var currentGuild = await currentGuildCollection.FindOneAsync(Query.All());
-        var result = await Client.GetChannels(currentGuild.Id);
-        return result;
+        var result = await Client.GetStringAsync($"guilds/{currentGuild.Id}/channels");
+        var channels = JsonConvert.DeserializeObject<List<ChannelModel>>(result)!.Where(x => x.Type == "0").ToList();
+        return channels;
     }
 
     public async Task UpdateChannel(string id)
@@ -57,8 +59,9 @@ public class QotService(DiscordHttpClient client)
             if (qot.ChannelId is null)
                 return null;
 
-            var result = await Client.GetCurrentChannelName(qot.ChannelId);
-            return result;
+            var result = await Client.GetStringAsync($"channels/{qot.ChannelId}");
+            var channel = JObject.Parse(result);
+            return (string?)channel["name"];
         }
         catch (Exception)
         {

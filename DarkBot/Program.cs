@@ -1,5 +1,4 @@
 using System.Text;
-using DarkBot.Clients;
 using DarkBot.Discord;
 using DarkBot.Services;
 using DarkBot.Web;
@@ -15,28 +14,25 @@ builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddControllers();
-builder.Services.AddHttpClient<BackendHttpClient>((provider, client) =>
-{
-    var httpContextAccessor = provider.GetRequiredService<IHttpContextAccessor>();
-    var token = httpContextAccessor.HttpContext!.Request.Cookies["account"];
-    var baseUri = builder.Configuration["baseURI"]!;
-
-    client.DefaultRequestHeaders.Add("Authorization", $"Bearer {token}");
-    client.BaseAddress = new Uri(baseUri);
-});
-builder.Services.AddHttpClient<DiscordHttpClient>(client =>
-{
-    var token = builder.Configuration["botToken"]!;
-    var apiVersion = builder.Configuration["apiVersion"]!;
-
-    client.DefaultRequestHeaders.Add("Authorization", $"Bot {token}");
-    client.BaseAddress = new Uri($"https://discord.com/api/v{apiVersion}");
-});
+builder.Services.AddSingleton(
+    new HttpClient(
+        new SocketsHttpHandler
+        {
+            PooledConnectionLifetime = TimeSpan.FromMinutes(2),
+        })
+    {
+        BaseAddress = new Uri($"https://discord.com/api/v{builder.Configuration["apiVersion"]}"),
+        DefaultRequestHeaders = { { "Authorization", $"Bot {builder.Configuration["botToken"]}" } }
+    });
 
 // Transients
 builder.Services.AddTransient<QotService>();
 
-builder.Services.AddTransient<AccountService>();
+// The HttpClient in AccountService is different than in other services and needs to have manually assigned auth token to get the users info
+builder.Services.AddHttpClient<AccountService>(client =>
+{
+    client.BaseAddress = new Uri($"https://discord.com/api/v{builder.Configuration["apiVersion"]}");
+});
 
 builder.Services.AddTransient<HomeService>();
 
@@ -137,8 +133,8 @@ app.MapGet("api/authorize", async (HttpContext context, [FromQuery] string code,
         SameSite = SameSiteMode.Strict
     };
 
-    context.Response.Cookies.Append("account", jwtToken.ToString(), options);
-    context.Response.Redirect("/Home");
+    context.Response.Cookies.Append("account", jwtToken, options);
+    context.Response.Redirect("/home");
 });
 
 // Run bot
