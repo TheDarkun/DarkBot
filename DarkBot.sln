@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DarkBot", "DarkBot.csproj", "{E8D6C03E-736D-43BB-A9EE-0D0C61897D15}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DarkBot", "DarkBot/DarkBot.csproj", "{E8D6C03E-736D-43BB-A9EE-0D0C61897D15}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
