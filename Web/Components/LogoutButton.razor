@@ -12,7 +12,7 @@
     private async Task OnLogout()
     {
         // C# HttpClient decided NOT to do its job and does not remove the cookie nor it redirects for state update... JavaScript saved the day
-        await JsRuntime.InvokeVoidAsync("fetch", "/api/Account/Logout", new { method = "DELETE", credentials = "same-origin" });
+        await JsRuntime.InvokeVoidAsync("fetch", "api/logout", new { method = "DELETE", credentials = "same-origin" });
         Manager.NavigateTo("/", true);
     }
 }

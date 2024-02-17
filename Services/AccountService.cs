@@ -12,9 +12,6 @@ public class AccountService(IConfiguration config, DiscordHttpClient client)
     private IConfiguration Config { get; } = config;
     private DiscordHttpClient Client { get; } = client;
 
-    public string GetRedirect()
-        => Config.GetSection("redirectURI").Value!;
-
     public async Task<AccountModel?> Authenticate(string code)
         => await Client.Authenticate(code);
 

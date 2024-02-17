@@ -2,6 +2,7 @@
 @using Newtonsoft.Json
 @using System.ComponentModel.DataAnnotations
 @using DarkBot.Clients
+@using DarkBot.Services
 @using Microsoft.IdentityModel.Tokens
 @using Microsoft.VisualBasic
 @rendermode InteractiveServer
@@ -35,7 +36,7 @@
         public string Id { get; set; }
     }
     
-    [Inject] public BackendHttpClient Client { get; set; } = null!;
+    [Inject] public HomeService Service { get; set; } = null!;
     [Inject] public NavigationManager Manager { get; set; } = null!;
     [Inject] public IJSRuntime JsRuntime { get; set; } = null!;
     
@@ -45,15 +46,15 @@
 
     protected override async Task OnInitializedAsync()
     {
-        JoinedGuilds = await Client.GetAsync<List<GuildModel>>("api/Home/GetJoinedGuilds");
+        JoinedGuilds = await Service.GetJoinedGuilds();
     }
 
     private async Task OnSetCurrentGuild()
     {
         var result = await JsRuntime.InvokeAsync<bool>("confirm", "Are you sure?");
         if (!result) return;
-        
-        await Client.PostAsJsonAsync("api/Home/CurrentGuild", SelectedGuild.Id);
+
+        await Service.SetGuild(SelectedGuild.Id);
         Manager.NavigateTo(Manager.Uri, true);
     }
 

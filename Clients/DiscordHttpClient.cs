@@ -19,7 +19,7 @@ public class DiscordHttpClient(IConfiguration config, HttpClient client)
                 { "client_secret", Config.GetSection("clientSecret").Value! },
                 { "grant_type", "authorization_code" },
                 { "code", code },
-                { "redirect_uri", $"{Config.GetSection("baseURI").Value!}/api/Account/Authenticate" }
+                { "redirect_uri", $"{Config.GetSection("baseURI").Value!}/api/authorize" }
             };
             var formContent = new FormUrlEncodedContent(formData);
             var response = await Client.PostAsync("oauth2/token", formContent);
