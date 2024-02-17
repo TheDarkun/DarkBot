@@ -1,5 +1,6 @@
 ﻿@using System.ComponentModel.DataAnnotations
 @using DarkBot.Models
+@using DarkBot.Services
 @using Newtonsoft.Json
 @if (Channels is not null)
 {
@@ -35,19 +36,13 @@
     private SelectedChannelModel SelectedChannel { get; set; } = new();
     private List<ChannelModel>? Channels { get; set; }
 
-    [Inject] public HttpClient Client { get; set; } = null!;
+    [Inject] public QotService Service { get; set; } = null!;
     [Inject] public NavigationManager Manager { get; set; } = null!;
     [Inject] public IJSRuntime JsRuntime { get; set; } = null!;
 
     protected override async Task OnInitializedAsync()
     {
-        var result = await Client.GetAsync($"{Manager.BaseUri}api/QOT/Channels");
-        Console.WriteLine(result.IsSuccessStatusCode);
-        if (result.IsSuccessStatusCode)
-        {
-            var content = await result.Content.ReadAsStringAsync();
-            Channels = JsonConvert.DeserializeObject<List<ChannelModel>>(content);
-        }
+        Channels = await Service.GetChannels();
     }
 
     private async Task OnSetNewChannel()
@@ -55,7 +50,7 @@
         var result = await JsRuntime.InvokeAsync<bool>("confirm", "Are you sure?");
         if (!result) return;
 
-        await Client.PostAsJsonAsync($"{Manager.BaseUri}api/QOT/Channel", SelectedChannel.Id);
+        await Service.UpdateChannel(SelectedChannel.Id);
         Manager.NavigateTo(Manager.Uri, true);
     }
 
