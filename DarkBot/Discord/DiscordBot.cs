@@ -57,7 +57,7 @@ public class DiscordBot(string token, IServiceProvider services)
             if (e.Message.ChannelId.ToString() == id)
             {
                 var replies = await QotService.GetReplies();
-                if (replies.Contains(e.Author.Id))
+                if (replies.Any(user => user.Id == e.Author.Id.ToString()))
                 {
                     var user = e.Author! as DiscordMember;
                     var dm = await user!.CreateDmChannelAsync();
@@ -66,7 +66,7 @@ public class DiscordBot(string token, IServiceProvider services)
                     return;
                 }
 
-                await QotService.AddReply(e.Author.Id);
+                await QotService.AddReply(e.Author as DiscordMember);
                 return; // ALWAYS RETURN AFTER YOUR CONDITION IS FINISHED
             }
         };
