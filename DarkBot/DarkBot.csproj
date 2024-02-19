@@ -21,5 +21,9 @@
     <ItemGroup>
       <Content Remove="Web\Pages\NotAuthorized.razor" />
     </ItemGroup>
+    
+    <ItemGroup>
+      <Folder Include="Web\Components\UI\" />
+    </ItemGroup>
 
 </Project>

@@ -27,6 +27,8 @@ builder.Services.AddSingleton(
 
 // Transients
 builder.Services.AddTransient<QotService>();
+builder.Services.AddTransient<BotService>();
+
 
 // The HttpClient in AccountService is different than in other services and needs to have manually assigned auth token to get the users info
 builder.Services.AddHttpClient<AccountService>(client =>

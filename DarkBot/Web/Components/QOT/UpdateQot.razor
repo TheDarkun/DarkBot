@@ -1,0 +1,78 @@
+﻿@using System.ComponentModel.DataAnnotations
+@using DarkBot.Models
+@using DarkBot.Services
+@using Newtonsoft.Json
+@rendermode InteractiveServer
+
+<div class="card h-full bg-base-200 border-2 border-neutral">
+    <div class="card-body h-96">
+        <span class="font-medium text-2xl flex gap-2">
+            <span class="material-symbols-outlined mt-1">
+                edit
+            </span>
+            <span>
+                Update
+            </span>
+        </span>
+        @if (isLoading)
+        {
+            <p class="flex items-center justify-center">
+                <span class="loading loading-spinner loading-lg"></span>
+            </p>
+        }
+        else
+        {
+            <EditForm OnValidSubmit="HandleUpdateQot" class="w-full flex flex-col gap-4 bg-red-40 p-0" Model="Qot">
+                <DataAnnotationsValidator/>
+                <ValidationSummary class="text-error font-bold text-center"/>
+                <InputNumber class="input border-2 border-neutral bg-base-300 text-xl" @bind-Value="Qot!.Index"/>
+                <InputDate class="input border-2 border-neutral bg-base-300 text-xl" @bind-Value="Qot.Date"/>
+                <InputSelect @bind-Value="Qot.ChannelId" class="select text-xl bg-base-300 border-2 border-neutral">
+                    <option selected disabled value="">Select a channel</option>
+                    @foreach (var channel in Channels!)
+                    {
+                        <option value="@channel.ChannelId">@channel.Name</option>
+                    }
+                </InputSelect>
+                <button class="btn btn-primary w-60 text-xl text-primary-content mx-auto" type="submit">Change</button>
+            </EditForm>
+        }
+    </div>
+</div>
+
+@code{
+
+    private QotModel? Qot { get; set; }
+    private List<ChannelModel>? Channels { get; set; }
+
+    [Inject] public QotService Service { get; set; } = null!;
+    [Inject] public NavigationManager Manager { get; set; } = null!;
+    [Inject] public IJSRuntime JsRuntime { get; set; } = null!;
+
+    [Parameter] public ActiveGuildModel Guild { get; set; } = null!;
+    private bool isLoading = true;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            isLoading = true;
+            Channels = await Service.GetChannels(Guild);
+            Qot = await Service.GetQotModel();
+
+            isLoading = false;
+            StateHasChanged();
+        }
+    }
+
+
+    private async Task HandleUpdateQot()
+    {
+        var result = await JsRuntime.InvokeAsync<bool>("confirm", "Are you sure?");
+        if (!result) return;
+        
+        await Service.UpdateQotModel(Qot);
+        Manager.NavigateTo(Manager.Uri, true);
+    }
+
+}

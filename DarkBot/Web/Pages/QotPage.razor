@@ -1,53 +1,49 @@
 ﻿@page "/qot"
 @using Microsoft.AspNetCore.Authorization
-@rendermode InteractiveServer
+@using DarkBot.Services
+@using DarkBot.Models
 @attribute [Authorize]
+@attribute [StreamRendering]
+@rendermode InteractiveServer
 
 <PageTitle>QOT</PageTitle>
 
-<div class="card w-80 bg-base-200 border-2 border-neutral mb-4">
-    <div class="card-body">
-        <h2 class="font-bold text-2xl">Current Info</h2>
-        @if (Qot is null)
-        {
-            <span class="loading loading-dots loading-md"></span>
-        }
-        else
-        {
-            <p>
-                <span class="font-medium text-xl">Index:</span> <span class="text-lg">@Qot.Index</span>
-            </p>
-            <p>
-                @*this is the only acceptable format, the US one is a mistake*@
-                <span class="font-medium text-xl">Date:</span> <span class="text-lg">@Qot.Date.ToString("d-M-yyyy")</span>
-            </p>
-            <p>
-                <span class="font-medium text-xl">Channel:</span> <span class="text-lg">
-                    @if (ActiveChannel is null)
-                    {
-                        <span class="loading loading-dots loading-sm"></span>
-                    }
-                    else
-                    {
-                        @ActiveChannel
-                    }
-                </span>
-            </p>
-        }
-    </div>
-</div>
-<ChangeChannel/>
 
-@if (Qot is not null)
+@if (guild is null)
 {
-    <div class="card w-80 bg-base-200 border-2 border-neutral mb-4">
-        <EditForm class="card-body w-full flex flex-col gap-4" OnValidSubmit="@OnSetQOT" Model="@newQot">
-            <h2 class="text-primary-content text-2xl font-bold">Update QOT</h2>
-            <DataAnnotationsValidator/>
-            <ValidationSummary class="text-error font-bold text-center"/>
-            <InputNumber class="input border-2 border-neutral bg-base-300 text-xl w-full" @bind-Value="newQot!.Index"/>
-            <InputDate class="input border-2 border-neutral bg-base-300 text-xl w-full" @bind-Value="newQot.Date"/>
-            <button class="btn btn-primary text-2xl text-primary-content " type="submit">Submit</button>
-        </EditForm>
-    </div>
+    <main class="flex items-center justify-center h-full">
+        <ChangeCurrentGuild/>
+    </main>
+}
+else
+{
+    <main>
+        <div class="flex flex-col gap-4">
+            <div class="flex flex-col md:flex-row gap-4 flex-wrap">
+                <CurrentInfo/>
+            </div>
+            <div class="flex flex-col lg:grid lg:grid-cols-2 2xl:grid-cols-4 lg:grid-rows-1 gap-4">
+                <div class="flex-1">
+                    <UserReplies/>
+                </div>
+                <div class="flex-1">
+                    <UpdateQot Guild="guild"/>
+                </div>
+            </div>
+        </div>
+    </main>
+}
+
+@code{
+
+    [Inject] public QotService Service { get; set; } = null!;
+
+    private ActiveGuildModel? guild;
+
+    protected override async Task OnInitializedAsync()
+    {
+        guild = await Service.GetCurrentGuild();
+
+    }
+
 }
