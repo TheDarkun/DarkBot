@@ -1,23 +1,49 @@
 ﻿@page "/qot"
 @using Microsoft.AspNetCore.Authorization
-@rendermode InteractiveServer
+@using DarkBot.Services
+@using DarkBot.Models
 @attribute [Authorize]
+@attribute [StreamRendering]
+@rendermode InteractiveServer
 
 <PageTitle>QOT</PageTitle>
 
 
-<main class="h-full">
-    <div class="flex flex-col gap-4">
-        <div class="flex flex-col md:flex-row gap-4 flex-wrap">
-            <CurrentInfo/>
-        </div>
-        <div class="flex flex-col lg:grid lg:grid-cols-2 2xl:grid-cols-4 lg:grid-rows-1 gap-4">
-            <div class="flex-1">
-                <UserReplies/>
+@if (guild is null)
+{
+    <main class="flex items-center justify-center h-full">
+        <ChangeCurrentGuild/>
+    </main>
+}
+else
+{
+    <main>
+        <div class="flex flex-col gap-4">
+            <div class="flex flex-col md:flex-row gap-4 flex-wrap">
+                <CurrentInfo/>
             </div>
-            <div class="flex-1">
-                <UpdateQot/>
+            <div class="flex flex-col lg:grid lg:grid-cols-2 2xl:grid-cols-4 lg:grid-rows-1 gap-4">
+                <div class="flex-1">
+                    <UserReplies/>
+                </div>
+                <div class="flex-1">
+                    <UpdateQot Guild="guild"/>
+                </div>
             </div>
         </div>
-    </div>
-</main>
+    </main>
+}
+
+@code{
+
+    [Inject] public QotService Service { get; set; } = null!;
+
+    private ActiveGuildModel? guild;
+
+    protected override async Task OnInitializedAsync()
+    {
+        guild = await Service.GetCurrentGuild();
+
+    }
+
+}

@@ -40,7 +40,7 @@ public class QotCommands(QotService service) : ApplicationCommandModule
             // Send a follow-up message instead of editing the response.
             await ctx.Channel.SendMessageAsync(new DiscordMessageBuilder()
                 .WithContent($"""
-                              # QOT #{qot.Index} by {ctx.Member.Mention}
+                              # QOT #{qot.Index-1} by {ctx.Member.Mention}
                               > {question}
                               """));
         }

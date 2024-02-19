@@ -1,26 +1,33 @@
 ﻿@using DarkBot.Services
 @using DarkBot.Models
 <div class="card h-full bg-base-200 border-2 border-neutral">
-    <div class="card-body w-full flex flex-col gap-4">
-
+    <div class="card-body w-full flex flex-col max-h-96 ">
+        <span class="font-bold text-2xl flex items-center gap-2">
+            <span class="material-symbols-outlined mt-1">
+                chat_bubble
+            </span>
+            <span>
+                Replies
+            </span>
+        </span>
         @if (users is null)
         {
-            <p>loading</p>
+            <p class="flex items-center justify-center">
+                <span class="loading loading-spinner loading-lg"></span>
+            </p>
+        }
+        else if (!users.Any())
+        {
+            <p class="flex items-center justify-center">
+                <span class="text-2xl font-bold">No user has submitted!</span>
+            </p>
         }
         else
         {
-            <span class="font-bold text-2xl flex items-center gap-2">
-                <span class="material-symbols-outlined mt-1">
-                    chat_bubble
-                </span>
-                <span>
-                    Replies
-                </span>
-            </span>
-            <table class="flex flex-col gap-4">
+            <table class="inline-flex flex-col overflow-y-scroll">
                 @foreach (var user in users)
                 {
-                    <tr class="w-full flex justify-between">
+                    <tr class="w-full flex justify-between mt-4">
                         <td>
                             <div class="flex items-center gap-3">
                                 <div class="avatar">
@@ -58,9 +65,7 @@
     private List<UserModel>? users;
 
     protected override async Task OnInitializedAsync()
-    {
-        users = await Service.GetReplies();
-    }
+        => users = await Service.GetReplies();
 
     private async Task HandleRemoveUser(string id)
     {
@@ -71,5 +76,4 @@
         await Service.RemoveReply(id);
         Manager.Refresh(true);
     }
-
 }

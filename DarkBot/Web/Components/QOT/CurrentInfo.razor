@@ -1,89 +1,106 @@
 ﻿@using DarkBot.Models
 @using DarkBot.Services
 
-
-@if (Qot is null)
-{
-    <span class="loading loading-dots loading-md"></span>
-}
-else
-{
-    <div class="card min-w-56 flex-1 max-h-32 text-primary-content bg-base-200 border-2 border-neutral">
-        <div class="card-body flex-row gap-8">
-            <span class="material-symbols-outlined my-auto" style="font-size: 2.5rem">
-                help
-            </span>
-            <h2 class="text-xl">
-                <span class="font-medium">
-                    Index
-                </span><br> <span class="text-lg">@Qot.Index</span>
-            </h2>
-        </div>
+<div class="card min-w-56 flex-1 max-h-32 bg-base-200 border-2 border-neutral text-base-content">
+    <div class="card-body flex-row gap-8">
+        <span class="material-symbols-outlined my-auto" style="font-size: 2.5rem">
+            help
+        </span>
+        <h2 class="text-xl">
+            <span class="font-medium">
+                Index
+            </span><br>
+            @if (Qot?.Index is null)
+            {
+                <span class="loading loading-dots loading-sm"></span>
+            }
+            else
+            {
+                <span class="text-lg">@Qot.Index</span>
+            }
+        </h2>
     </div>
-    <div class="card max-h-32 min-w-56  flex-1 text-primary-content bg-base-200 border-2 border-neutral">
-        <div class="card-body flex-row gap-8">
-            <span class="material-symbols-outlined my-auto" style="font-size: 2.5rem">
-                calendar_today
-            </span>
-            @*this is the only acceptable format, the US one is a mistake*@
-            <h2 class="text-xl ">
-                <span class="font-medium">
-                    Date
-                </span><br><span class="text-lg">@Qot.Date.ToString("d-M-yyyy")</span>
-            </h2>
-        </div>
+</div>
+<div class="card max-h-32 min-w-56  flex-1 text-base-content bg-base-200 border-2 border-neutral">
+    <div class="card-body flex-row gap-8">
+        <span class="material-symbols-outlined my-auto" style="font-size: 2.5rem">
+            calendar_today
+        </span>
+        @*this is the only acceptable format, the US one is a mistake*@
+        <h2 class="text-xl ">
+            <span class="font-medium">
+                Date
+            </span><br>
+            @if (Qot?.Date is null)
+            {
+                <span class="loading loading-dots loading-sm"></span>
+            }
+            else
+            {
+                <span class="text-lg">@Qot?.Date.ToString("d-M-yyyy")</span>
+            }
+        </h2>
     </div>
-    <div class="card min-w-56 max-h-32 flex-1 text-primary-content bg-base-200 border-2 border-neutral">
-        <div class="card-body flex-row gap-8">
-            <span class="material-symbols-outlined my-auto" style="font-size: 2.5rem">
-                chat_bubble
-            </span>
-            <h2 class="text-xl ">
-                <span class="font-medium">
-                    Replies
-                </span><br><span class="text-lg">@Qot.Replies.Count</span>
-            </h2>
-        </div>
+</div>
+<div class="card min-w-56 max-h-32 flex-1 text-base-content bg-base-200 border-2 border-neutral">
+    <div class="card-body flex-row gap-8">
+        <span class="material-symbols-outlined my-auto" style="font-size: 2.5rem">
+            chat_bubble
+        </span>
+        <h2 class="text-xl ">
+            <span class="font-medium">
+                Replies
+            </span><br>
+            @if (Qot?.Replies is null)
+            {
+                <span class="loading loading-dots loading-sm"></span>
+            }
+            else
+            {
+                <span class="text-lg">@Qot?.Replies.Count</span>
+            }
+        </h2>
     </div>
-    <div class="card max-h-32 flex-1 min-w-64 text-primary-content bg-base-200 border-2 border-neutral">
-        <div class="card-body flex-row gap-8">
-            <span class="material-symbols-outlined my-auto" style="font-size: 2.5rem">
-                location_on
-            </span>
-            <h2 class="text-xl ">
-                <span class="font-medium">
-                    Channel
-                </span><br>
-                <span class="text-lg">
-                    @if (ActiveChannel is null)
-                    {
-                        <span class="loading loading-dots loading-sm"></span>
-                    }
-                    else
-                    {
-                        <span class="w-full">@ActiveChannel</span>
-                    }
-                </span>
-            </h2>
-        </div>
+</div>
+<div class="card max-h-32 flex-1 min-w-64 text-base-content bg-base-200 border-2 border-neutral">
+    <div class="card-body flex-row gap-8 @(channelNotSet ? "text-error" : "")">
+        <span class="material-symbols-outlined my-auto " style="font-size: 2.5rem">
+            location_on
+        </span>
+        <h2 class="text-xl ">
+            <span class="font-medium">
+                Channel
+            </span><br>
+            @if (channelNotSet)
+            {
+                <span class="w-full">Not set!</span>
+            }
+            else if (ActiveChannel is null)
+            {
+                <span class="loading loading-dots loading-sm"></span>
+            }
+            else
+            {
+                <span class="w-full">@ActiveChannel</span>
+            }
+        </h2>
     </div>
-}
+</div>
 
 @code{
 
     [Inject] public QotService Service { get; set; } = null!;
 
-
     private QotModel? Qot { get; set; }
     private string? ActiveChannel { get; set; }
 
-    private QotModel? newQot;
+    private bool channelNotSet = false;
 
     protected override async Task OnInitializedAsync()
     {
         Qot = await Service.GetQotModel();
-        newQot = Qot;
         ActiveChannel = await Service.GetCurrentChannelName();
+        channelNotSet = ActiveChannel is null;
     }
 
 }
