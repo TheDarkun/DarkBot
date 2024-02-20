@@ -57,16 +57,16 @@ public class DiscordBot(string token, IServiceProvider services)
             if (e.Message.ChannelId.ToString() == id)
             {
                 var replies = await QotService.GetReplies();
-                if (replies.Any(user => user.Id == e.Author.Id.ToString()))
+                var user = (e.Author as DiscordMember)!;
+                if (replies.Any(reply => reply.Id == user.Id.ToString()))
                 {
-                    var user = e.Author! as DiscordMember;
-                    var dm = await user!.CreateDmChannelAsync();
-                    await dm.SendMessageAsync("you are braindead");
+                    var dm = await user.CreateDmChannelAsync();
+                    await dm.SendMessageAsync("You have already answered the question! If you want to add something, just edit your message.");
                     await e.Message.DeleteAsync();
                     return;
                 }
 
-                await QotService.AddReply(e.Author as DiscordMember);
+                await QotService.AddReply(user);
                 return; // ALWAYS RETURN AFTER YOUR CONDITION IS FINISHED
             }
         };
