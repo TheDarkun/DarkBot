@@ -8,6 +8,7 @@
     <div class="h-full px-3 py-4 overflow-y-auto">
         <ul class="space-y-2 font-medium">
             <AsideButton IsActive=@(currentWebsite == "" || currentWebsite == "home") Icon="home" Name="home" OnSetAside="@HandleSetAside" />
+            <AsideButton IsActive=@(currentWebsite == "banner") Icon="ad" Name="banner" OnSetAside="@HandleSetAside" />
             <AsideButton IsActive=@(currentWebsite == "qot") Icon="help" Name="qot" OnSetAside="@HandleSetAside" />
         </ul>
     </div>

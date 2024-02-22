@@ -27,6 +27,7 @@ builder.Services.AddSingleton(
 
 // Transients
 builder.Services.AddTransient<QotService>();
+builder.Services.AddTransient<BannerService>();
 builder.Services.AddTransient<BotService>();
 
 
