@@ -1,33 +1,6 @@
-bin/
-obj/
-/packages/
-riderModule.iml
-/_ReSharper.Caches/
-
-# Default ignored files
-/shelf/
-/workspace.xml
-# Rider ignored files
-/projectSettingsUpdater.xml
-/modules.xml
-/contentModel.xml
-/.idea.DarkBot.iml
-# Editor-based HTTP Client requests
-/httpRequests/
-# Datasource local storage ignored files
-/dataSources/
-/dataSources.local.xml
-
-# Default ignored files
-DarkBot/shelf/
-DarkBot/workspace.xml
-# Rider ignored files
-DarkBot/projectSettingsUpdater.xml
-DarkBot/modules.xml
-DarkBot/contentModel.xml
-DarkBot/.idea.DarkBot.iml
-# Editor-based HTTP Client requests
-DarkBot/httpRequests/
-# Datasource local storage ignored files
-DarkBot/dataSources/
-DarkBot/dataSources.local.xml
+/.idea
+/bin
+/obj
+/DarkBot/bin
+/DarkBot/obj
+/DarkBot/node_modules
