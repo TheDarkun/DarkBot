@@ -1,6 +1,25 @@
 ﻿@page "/banner"
+@using DarkBot.Services
+@inject BannerService Service;
+@rendermode InteractiveServer
 <h3>BannerPage</h3>
-
+<InputFile class="file-input file-input-bordered file-input-primary w-full max-w-xs" OnChange="OnLoadFile" multiple="false" accept="image/png, image/jpeg" />
+@foreach (var error in Errors)
+{
+    <p>@error</p>
+}
 @code {
-    
+    private List<string> Errors = new();
+    private async Task OnLoadFile(InputFileChangeEventArgs e)
+    {
+        Errors.Clear();
+
+        if (e.File.ContentType is not ("image/jpeg" or "image/png"))
+            Errors.Add("File has to be either .png or .jpeg");
+        if (e.File.Size > 1024 * 1024 * 4)
+            Errors.Add("File has to be less than 3 MB big");
+        if (!Errors.Any())
+            await Service.SaveFile(e.File);
+
+    }
 }
