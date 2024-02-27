@@ -31,8 +31,17 @@ public class BannerCommands(BannerService service) : ApplicationCommandModule
 
         await ctx.EditResponseAsync(new DiscordWebhookBuilder()
             .WithContent($"Uploading image..."));
-        await service.UploadFile(image.Url, image.MediaType == "image/png");
-        await ctx.EditResponseAsync(new DiscordWebhookBuilder()
-            .WithContent($"Successfully added new banner!"));
+        var result = await service.SaveImageAttachment(image);
+        if (result)
+        {
+            await ctx.EditResponseAsync(new DiscordWebhookBuilder()
+                .WithContent($"Successfully added new banner!"));
+        }
+        else
+        {
+            await ctx.EditResponseAsync(new DiscordWebhookBuilder()
+                .WithContent($"Couldn't upload image!"));
+        }
+        
     }
 }

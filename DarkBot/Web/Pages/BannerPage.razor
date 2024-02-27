@@ -19,7 +19,7 @@
         if (e.File.Size > 1024 * 1024 * 4)
             Errors.Add("File has to be less than 3 MB big");
         if (!Errors.Any())
-            await Service.SaveFile(e.File);
+            await Service.SaveBrowserImage(e.File);
 
     }
 }
