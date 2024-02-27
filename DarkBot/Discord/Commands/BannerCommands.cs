@@ -31,7 +31,7 @@ public class BannerCommands(BannerService service) : ApplicationCommandModule
 
         await ctx.EditResponseAsync(new DiscordWebhookBuilder()
             .WithContent($"Uploading image..."));
-        var result = await service.SaveImageAttachment(image);
+        var result = await service.SaveImageAttachment(image, ctx.User.Id);
         if (result)
         {
             await ctx.EditResponseAsync(new DiscordWebhookBuilder()
@@ -42,6 +42,31 @@ public class BannerCommands(BannerService service) : ApplicationCommandModule
             await ctx.EditResponseAsync(new DiscordWebhookBuilder()
                 .WithContent($"Couldn't upload image!"));
         }
+    }
+
+    [SlashCommand("show-banner", "Show your specific banner!")]
+    public async Task ShowBanners(InteractionContext ctx,
+        [Choice("First", "0")] [Choice("Second", "1")] [Choice("Third", "2")] [Option("Banner", "Which one?")]
+        string option)
+    {
+        await ctx.DeferAsync(true);
+
+        var banner = await service.GetBanner(ctx.User.Id, int.Parse(option));
+        
+        if (banner is null)
+        {
+            await ctx.EditResponseAsync(
+                new DiscordWebhookBuilder(new DiscordMessageBuilder().WithContent("You don't have a banner here. Please add new one by using **/add-banner**")));
+        }
+        else
+        {
+            await ctx.EditResponseAsync(
+                new DiscordWebhookBuilder(new DiscordMessageBuilder()
+                    .AddFile(option + (banner.Contains(".png") ? ".png" : ".jpg"),
+                        new MemoryStream(await File.ReadAllBytesAsync(
+                            banner)))));
+        }
+        
         
     }
 }
