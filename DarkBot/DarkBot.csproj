@@ -24,6 +24,7 @@
     
     <ItemGroup>
       <Folder Include="Web\Components\UI\" />
+      <Folder Include="wwwroot\images\" />
     </ItemGroup>
 
 </Project>
