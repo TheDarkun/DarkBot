@@ -1,4 +1,5 @@
 ﻿using DarkBot.Models;
+using DarkBot.Models.Banner;
 using DSharpPlus.Entities;
 using Microsoft.AspNetCore.Components.Forms;
 
@@ -17,13 +18,13 @@ public class BannerService(IWebHostEnvironment env, HttpClient client)
         await s.CopyToAsync(stream);
     }
 
-    public async Task<bool> SaveImageAttachment(DiscordAttachment image, ulong userId)
+    public async Task<BannerResult> SaveImageAttachment(DiscordAttachment image, ulong userId)
     {
         try
         {
             var result = await client.GetAsync(image.Url);
             
-            if (!result.IsSuccessStatusCode) return false;
+            if (!result.IsSuccessStatusCode) return BannerResult.DatabaseError;
 
             var name = Path.GetRandomFileName() + (image.MediaType == "image/png" ? ".png" : ".jpg");
 
@@ -42,7 +43,7 @@ public class BannerService(IWebHostEnvironment env, HttpClient client)
             }
             else if (banner.Names.Count >= 3)
             {
-                return false;
+                return BannerResult.ImageLimit;
             }
             else
             {
@@ -50,12 +51,12 @@ public class BannerService(IWebHostEnvironment env, HttpClient client)
                 await bannersCollection.UpdateAsync(banner);
             }
 
-            return true;
+            return BannerResult.Success;
         }
         catch (Exception e)
         {
             Console.WriteLine(e);
-            return false;
+            return BannerResult.Error;
         }
     }
 
@@ -75,6 +76,45 @@ public class BannerService(IWebHostEnvironment env, HttpClient client)
         {
             Console.WriteLine(e);
             return null;
+        }
+    }
+
+    public async Task<BannerResult> DeleteBanner(ulong userId, int parse)
+    {
+        try
+        {
+            var bannersCollection = Database.LiteDb.GetCollection<BannerModel>("Banner");
+            if (bannersCollection is null)
+                return BannerResult.DatabaseError;
+
+            var banner = await bannersCollection.FindOneAsync(x => x.UserId == userId);
+            banner.Names.RemoveAt(parse);
+            await bannersCollection.UpdateAsync(banner);
+            return BannerResult.Success;
+        }
+        catch (ArgumentOutOfRangeException e)
+        {
+            Console.WriteLine(e);
+            return BannerResult.ImageLimit;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            return BannerResult.Error;
+        }
+    }
+
+    public async Task<BannerResult> UpdateBanner(ulong userId, int parse, DiscordAttachment image)
+    {
+        try
+        {
+            var result = await DeleteBanner(userId, parse);
+            return result == BannerResult.Success ? await SaveImageAttachment(image, userId) : result;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            return BannerResult.Error;
         }
     }
 }
