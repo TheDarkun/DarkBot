@@ -9,6 +9,8 @@ public class BannerModel
     public ulong UserId { get; set; }
     public List<string> Names { get; set; } = null!;
 
+    public bool HasCooldown { get; set; }
+    
     public BannerModel(ulong userId, List<string>? names)
     {
         UserId = userId;

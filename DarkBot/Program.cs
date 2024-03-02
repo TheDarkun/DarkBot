@@ -147,5 +147,11 @@ if (Environment.GetEnvironmentVariable("PROFILE") == "RunDiscord")
     await bot.ConnectAsync();
 }
 
+// Resolve the BannerService from the DI container
+var bannerService = app.Services.GetRequiredService<BannerService>();
+
+// Call the SetBanner method
+await bannerService.SetBanner();
+
 
 app.Run();
